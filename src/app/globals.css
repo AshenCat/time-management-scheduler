@@ -5,6 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-p-1: #0B0C10;
+  --color-p-2: #1F2833;
+  --color-s-1: #66FCF1;
+  --color-s-2: #45A29E;
+  --color-neutral: #C5C6C7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,8 +19,33 @@
   }
 }
 
+ul {
+  list-style:none;
+}
+ul, li { /* reset the margin and padding */
+  margin: 0;
+  padding: 0;
+}
+.comment ul {
+   /* 1 em margin for the UL elements under .comment */
+  margin-left: 1em;
+}
+.comment ul ul ul ul ul {
+   /* stop the nesting! */
+  margin-left: 0;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: var(--color-p-2);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  transition: .1s;
 }
