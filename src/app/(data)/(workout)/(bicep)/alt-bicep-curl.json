@@ -1,0 +1,38 @@
+{
+    "title": "Alternating Bicep Curl",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/bicep/animation-alt-bicep-curl.gif",
+            "type": "image"
+        }
+    ],
+    "description": "Alternating Bicep Curls are a classic arm workout that targets the biceps brachii, helping to build size and strength.\n\nHow to Perform:\n- Stand upright, holding a dumbbell in each hand with your palms facing forward.\n- Curl one dumbbell up toward your shoulder, keeping your elbow close to your torso.\n- Squeeze your biceps at the top, then slowly lower the dumbbell back down.\n- Repeat with the other arm, alternating between left and right.\n\nMuscles Worked:\n✔ Biceps brachii (main target)\n✔ Brachialis (helps add arm thickness)\n✔ Forearms (secondary engagement)\n\nThis exercise helps build stronger, more defined arms while improving muscle symmetry and control. 💪",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "✔ Maintain Proper Posture – Stand upright with your chest up, shoulders back, and core engaged.",
+                "✔ Keep Your Elbows Stationary – Your elbows should stay close to your torso without moving forward.",
+                "✔ Use a Full Range of Motion – Curl the weight all the way up and fully extend your arm at the bottom.",
+                "✔ Lift and Lower Slowly – Control both the lifting (concentric) and lowering (eccentric) phases to maximize tension.",
+                "✔ Squeeze at the Top – Hold the contraction for a second at the peak of the movement.",
+                "✔ Use a Challenging but Manageable Weight – Choose a weight that allows controlled movement without cheating.",
+                "✔ Breathe Correctly – Exhale as you lift the dumbbell and inhale as you lower it."
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "❌ Don’t Swing or Use Momentum – Avoid rocking your body or using your back to lift the weight.",
+                "❌ Don’t Shrug Your Shoulders – Keep your shoulders relaxed to prevent unnecessary strain.",
+                "❌ Don’t Lock Out Your Elbows – Keep a slight bend at the bottom to reduce joint stress.",
+                "❌ Don’t Rush the Movement – Performing slow, controlled reps is more effective than fast, sloppy ones.",
+                "❌ Don’t Lean Back – If you’re arching your back, the weight is too heavy.",
+                "❌ Don’t Drop the Dumbbell Quickly – Lower it slowly to maintain tension and build strength.",
+                "❌ Don’t Let Your Wrists Bend Too Much – Keep them straight to avoid unnecessary strain."
+            ],
+            "type": "list"
+        }
+    ]
+}

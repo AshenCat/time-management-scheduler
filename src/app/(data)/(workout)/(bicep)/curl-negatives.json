@@ -1,0 +1,39 @@
+{
+    "title": "Dumbbell Curl Negatives",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/bicep/animation-dumbbell-curl-negatives.gif",
+            "type": "image"
+        },
+        {
+            "url": "/static/images/workout/bicep/bicep-tendons-muscles.jpg",
+            "type": "image"
+        }
+    ],
+    "description": "Dumbbell curl negatives focus on the eccentric (lowering) phase of the movement to increase muscle strength and hypertrophy. Instead of lifting the dumbbell explosively, you slowly lower it over 3-5 seconds, maximizing muscle tension and control. This method helps improve biceps endurance, size, and overall strength.",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "✔ Use a Controlled Descent – Lower the dumbbell slowly (3-5 seconds) to maximize muscle tension.",
+                "✔ Engage Your Core – Keep your core tight to prevent unnecessary swaying.",
+                "✔ Maintain Proper Posture – Stand upright with shoulders back and chest up.",
+                "✔ Use a Challenging but Manageable Weight – Choose a weight that allows slow control without failure.",
+                "✔ Keep Your Elbows Stationary – Ensure your elbows stay close to your torso.",
+                "✔ Breathe Properly – Inhale as you lower the dumbbell and exhale before resetting."
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "❌ Don’t Rush the Negative Phase – The eccentric portion should be slow and controlled, not rushed.",
+                "❌ Don’t Swing the Weight – Avoid using momentum to cheat the movement.",
+                "❌ Don’t Overextend Your Elbows – Keep a slight bend at the bottom to avoid joint stress.",
+                "❌ Don’t Arch Your Back – If you have to lean back, the weight is too heavy.",
+                "❌ Don’t Let the Weight Drop – Lower it with control to engage muscles fully."
+            ],
+            "type": "list"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "title": "Alternating Hammer Curl",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/bicep/animation-alt-hammer-curl.gif",
+            "type": "image"
+        }
+    ],
+    "description": "Alternating Hammer Curls are a biceps and forearm workout where you lift dumbbells in a controlled, alternating fashion with a neutral grip (palms facing inward).\n\nHow to Perform:\n- Stand upright with a dumbbell in each hand, arms at your sides, palms facing inward.\n- Curl one dumbbell up toward your shoulder while keeping your elbow close to your body.\n- Squeeze your biceps at the top, then slowly lower the dumbbell back to the starting position.\n- Repeat with the other arm, alternating between left and right.\n\nMuscles Worked:\n✔ Biceps brachii\n✔ Brachialis (muscle underneath the biceps)\n✔ Brachioradialis (forearm muscle)\n\nThis exercise helps build thicker arms by targeting the brachialis, which pushes the biceps up for a fuller look. 💪",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "✔ Maintain Proper Form – Keep your elbows close to your torso and avoid excessive swinging. Only your forearms should move.",
+                "✔ Engage Your Core – A tight core helps maintain balance and prevent lower back strain.",
+                "✔ Use a Controlled Motion – Lift and lower the dumbbells in a slow, controlled manner to maximize muscle engagement.",
+                "✔ Keep Your Wrists Neutral – Your palms should face inward throughout the movement (neutral grip).",
+                "✔ Squeeze at the Top – Contract your biceps at the peak of the movement for better muscle activation.",
+                "✔ Use a Full Range of Motion – Lower the dumbbell all the way down without locking out your elbows.",
+                "✔ Breathe Properly – Exhale as you lift, inhale as you lower the dumbbell.",
+                "✔ Choose the Right Weight – Use a weight that challenges you but still allows proper form."
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "❌ Don’t Swing or Use Momentum – Avoid using your back or shoulders to lift the weight.",
+                "❌ Don’t Rush the Reps – Fast reps reduce time under tension and effectiveness.",
+                "❌ Don’t Lock Your Elbows – Keep a slight bend at the bottom to avoid joint strain.",
+                "❌ Don’t Shrug Your Shoulders – Keep them down to avoid unnecessary tension.",
+                "❌ Don’t Lean Back – If you have to arch your back, the weight is too heavy.",
+                "❌ Don’t Let the Dumbbells Touch Your Body – Keep a small gap to ensure proper muscle activation.",
+                "❌ Don’t Neglect the Negative Phase – Lowering the weight slowly helps with muscle growth."
+            ],
+            "type": "list"
+        }
+    ]
+}

@@ -19,21 +19,13 @@
   }
 }
 
-ul {
+/* ul {
   list-style:none;
 }
-ul, li { /* reset the margin and padding */
+ul, li { 
   margin: 0;
   padding: 0;
-}
-.comment ul {
-   /* 1 em margin for the UL elements under .comment */
-  margin-left: 1em;
-}
-.comment ul ul ul ul ul {
-   /* stop the nesting! */
-  margin-left: 0;
-}
+} */
 
 html, body {
   margin: 0;

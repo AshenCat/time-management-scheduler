@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-function page() {
-  return (
-    <div>workout base</div>
-  )
+function Page() {
+    return <div>WORKOUT BASE</div>;
 }
 
-export default page
+export default Page;

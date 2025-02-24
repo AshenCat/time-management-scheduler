@@ -5,6 +5,7 @@ import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Accordion from "./(reusable)/Accordion/Accordion";
 import { createQueryString } from "../(lib)/commons";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function Sidebar() {
     const pathname = usePathname();
@@ -23,19 +24,23 @@ function Sidebar() {
     console.log(pathname);
 
     return (
-        <header className="w-fit h-full bg-[color:--color-s-2] text-[color:--color-neutral]">
-            <h2 className="underline underline-offset-8 p-4">
+        <header className="basis-48 shrink-0 h-full text-[color:--color-neutral] bg-[color:--color-s-2] relative">
+            <h2 className="underline underline-offset-8 p-4 text-xl content-baseline flex justify-between">
                 <Link href="/">
                     <span className="underline decoration-indigo-500">
                         Cat&apos;s
                     </span>{" "}
                     Personal
                 </Link>
+                <button className="basis-3 bg-[color:--color-s-2]">
+                    <FaArrowLeft />
+                </button>
             </h2>
             <nav className="flex flex-col hover:*:bg-[color:--color-p-2] hover:*:text-[color:--color-s-1] *:flex *:text-center *:[&>*]:w-full">
                 <div
                     className={
-                        pathname.toLowerCase().includes("workout")
+                        pathname.toLowerCase().includes("workout") ||
+                        workoutAccordionState
                             ? navItemSelectedClassName
                             : ""
                     }
@@ -44,16 +49,14 @@ function Sidebar() {
                         open={workoutAccordionState}
                         label="Workout"
                         onClick={() => {
-                            if (!pathname.toLowerCase().endsWith("workout"))
-                                router.push(
-                                    "/workout?" +
-                                        createQueryString(
-                                            "workout-accordion-state",
-                                            JSON.stringify(
-                                                !workoutAccordionState
-                                            )
-                                        )
-                                );
+                            // if (!pathname.toLowerCase().endsWith("workout"))
+                            router.push(
+                                "?" +
+                                    createQueryString(
+                                        "workout-accordion-state",
+                                        JSON.stringify(!workoutAccordionState)
+                                    )
+                            );
                         }}
                     >
                         <div className="flex flex-col">
@@ -69,6 +72,7 @@ function Sidebar() {
                                 <Link
                                     href={`/workout/${item}?`}
                                     key={`item-${index}`}
+                                    onClick={(e) => e.stopPropagation()}
                                     className="hover:scale-110 p-4 capitalize"
                                 >
                                     {item}
