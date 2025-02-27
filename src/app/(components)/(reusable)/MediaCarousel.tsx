@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FaCircle } from "react-icons/fa6";
@@ -21,13 +21,20 @@ function MediaCarousel({
     const currentMedia = mediaURLs[mediaIndex];
     return (
         <figure className={className}>
-            <div className="overflow-hidden flex items-center">
+            <div className="overflow-hidden flex items-center justify-center">
                 {!!currentMedia && currentMedia.type === "image" && (
                     <Image
                         src={currentMedia.url}
                         alt="title"
-                        width={width ?? 250}
-                        height={height ?? 250}
+                        sizes="(max-width: 768px) 100vw,
+              (max-width: 1200px) 50vw,
+              33vw"
+                        width={width ?? 0}
+                        height={height ?? 0}
+                        {...(!width &&
+                            !height && {
+                                style: { width: "100%", height: "auto" },
+                            })}
                     />
                 )}
             </div>

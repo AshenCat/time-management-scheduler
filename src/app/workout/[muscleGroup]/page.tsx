@@ -1,22 +1,17 @@
 import MediaCarousel from "@/app/(components)/(reusable)/MediaCarousel";
 import DATA_BICEP from "@/app/(data)/(workout)/(bicep)/data-bicep";
+import Link from "next/link";
 import React from "react";
 import { v4 } from "uuid";
 
-interface IWorkoutCard {
-    title: string;
-    mediaURLs: MediaURL[];
-    description?: string;
-}
-
 export default async function Page({
     params,
+    searchParams,
 }: {
     params: Promise<{ muscleGroup: string }>;
+    searchParams: Promise<{ modal: string }>;
 }) {
     const { muscleGroup } = await params;
-
-
 
     return (
         <main className="flex flex-col p-4 md:p-8 flex-grow overflow-auto">
@@ -64,13 +59,23 @@ export default async function Page({
     );
 }
 
+interface IWorkoutCard {
+    title: string;
+    mediaURLs: MediaURL[];
+    description?: string;
+}
+
 function WorkoutCard({ title, mediaURLs, description }: IWorkoutCard) {
     return (
         <article className="flex flex-col border-2 border-[color:--color-s-2]">
-            <h3 className="text-lg p-4">{title}</h3>
+            <Link href={`?modal-content=` + title}>
+                <h3 className="text-lg p-4">{title}</h3>
+            </Link>
             <MediaCarousel
                 mediaURLs={mediaURLs}
                 className="flex relative h-[250px] bg-white p-4"
+                width={350}
+                height={350}
             />
             <figcaption>{description}</figcaption>
         </article>

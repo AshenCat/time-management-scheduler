@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ModalHelper from "./ModalHelper";
 
 export const metadata: Metadata = {
     title: "Cat's Personal Scheduler",
@@ -10,5 +11,10 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return <>{children}</>;
+    return (
+        <>
+            {children}
+            <ModalHelper />
+        </>
+    );
 }
