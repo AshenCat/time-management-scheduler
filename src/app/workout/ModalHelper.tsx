@@ -1,16 +1,24 @@
 "use client";
 import React from "react";
 import Modal from "../(components)/(reusable)/Modal/Modal";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import DATA_BICEP from "../(data)/(workout)/(bicep)/data-bicep";
+import {
+    useParams,
+    usePathname,
+    useRouter,
+    useSearchParams,
+} from "next/navigation";
 import MediaCarousel from "../(components)/(reusable)/MediaCarousel";
 import { AnimatePresence } from "motion/react";
 import { v4 } from "uuid";
+import WORKOUTS from "../(data)";
 
 function ModalHelper() {
     const router = useRouter();
     const pathname = usePathname();
+    const params = useParams();
     const searchParams = useSearchParams();
+
+    const { muscleGroup } = params;
 
     const modalInfoStateQuery = searchParams.get("modal-content");
 
@@ -25,8 +33,10 @@ function ModalHelper() {
     //     })?.description
     // );
 
-    const modalData = DATA_BICEP.workouts.find(
-        (workout) => workout.title === modalInfoStateQuery
+    const DATA = WORKOUTS[muscleGroup as keyof typeof WORKOUTS];
+
+    const modalData = DATA.workouts.find(
+        (workout) => workout.urlParam === modalInfoStateQuery
     );
 
     return (

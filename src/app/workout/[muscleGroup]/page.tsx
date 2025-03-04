@@ -1,6 +1,7 @@
 import MediaCarousel from "@/app/(components)/(reusable)/MediaCarousel";
-import DATA_BICEP from "@/app/(data)/(workout)/(bicep)/data-bicep";
+import WORKOUTS from "@/app/(data)";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
 import { v4 } from "uuid";
 
@@ -13,13 +14,19 @@ export default async function Page({
 }) {
     const { muscleGroup } = await params;
 
+    if (!Object.keys(WORKOUTS).includes(muscleGroup)) notFound();
+
+    const muscleGroupChecked = muscleGroup as keyof typeof WORKOUTS;
+
+    const DATA = WORKOUTS[muscleGroupChecked];
+
     return (
         <main className="flex flex-col p-4 md:p-8 flex-grow overflow-auto">
             <h2 className="text-4xl text-[color:--color-s-1]">
                 <span className="capitalize">{muscleGroup}</span> Workouts
             </h2>
             <section className="my-4 flex gap-4 flex-col md:flex-row">
-                {DATA_BICEP.workouts.map((workout, index) => (
+                {DATA.workouts.map((workout, index) => (
                     <WorkoutCard
                         key={v4() + index}
                         title={workout.title}
@@ -30,7 +37,7 @@ export default async function Page({
             <hr />
             <section className="flex justify-between gap-2 md:gap-8 flex-col-reverse md:flex-row">
                 <div>
-                    {DATA_BICEP.articles.map((article, index) => (
+                    {DATA.articles.map((article, index) => (
                         <article key={article.title + index} className="my-4">
                             <h3 className="text-lg">{article.title}</h3>
                             <div>
@@ -48,7 +55,7 @@ export default async function Page({
                 </div>
                 <aside className="my-4  md:shrink-0">
                     <MediaCarousel
-                        mediaURLs={DATA_BICEP.mediaURLs}
+                        mediaURLs={DATA.mediaURLs}
                         height={400}
                         width={400}
                         className="relative"
@@ -68,7 +75,7 @@ interface IWorkoutCard {
 function WorkoutCard({ title, mediaURLs, description }: IWorkoutCard) {
     return (
         <article className="flex flex-col border-2 border-[color:--color-s-2]">
-            <Link href={`?modal-content=` + title}>
+            <Link href={`?modal-content=` + title.toLowerCase().replaceAll(' ', '-')}>
                 <h3 className="text-lg p-4">{title}</h3>
             </Link>
             <MediaCarousel

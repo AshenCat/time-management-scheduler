@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Accordion from "./(reusable)/Accordion/Accordion";
 import { createQueryString } from "../(lib)/commons";
 import { FaArrowLeft } from "react-icons/fa6";
+import { MUSCLE_GROUPS } from "../(lib)/client-commons";
 
 function Sidebar() {
     const pathname = usePathname();
@@ -60,15 +61,7 @@ function Sidebar() {
                         }}
                     >
                         <div className="flex flex-col">
-                            {[
-                                "bicep",
-                                "tricep",
-                                "shoulder",
-                                "chest",
-                                "back",
-                                "core",
-                                "leg",
-                            ].map((item, index) => (
+                            {MUSCLE_GROUPS.map((item, index) => (
                                 <Link
                                     href={`/workout/${item}?`}
                                     key={`item-${index}`}
