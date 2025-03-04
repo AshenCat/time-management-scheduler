@@ -1,0 +1,39 @@
+{
+    "title": "PJR Pull Over",
+    "urlParam": "pjr-pull-over",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/tricep/animation-PJR-pull-over.gif",
+            "type": "image"
+        }
+    ],
+    "description": "The PJR Pullover is a specialized exercise that targets the triceps while also engaging the chest and shoulders. It's a variation of the traditional pullover, but with a focus on building strength in the triceps. Here’s a breakdown of what you need to know about this workout:\n\nHow to Perform the PJR Pullover:\nStarting Position:\n\nLie on a flat bench with your upper back and head supported.\nHold a dumbbell with both hands, arms extended above your chest.\nMovement:\n\nLower the dumbbell behind your head in a controlled manner, keeping your elbows slightly bent.\nFocus on stretching your triceps as you lower the weight.\nPull the dumbbell back up to the starting position, engaging your triceps throughout the movement.\nRepetitions:\n\nAim for 3-4 sets of 8-12 repetitions, depending on your fitness level.\nBenefits of the PJR Pullover:\nTricep Development: This exercise specifically targets the triceps, helping to build size and strength.\nUpper Body Engagement: While the focus is on the triceps, it also works the chest and shoulders, making it a great compound movement.\nFlexibility: The pullover motion can improve shoulder flexibility and mobility.\nTips for Success:\nControl Your Movement: Avoid using momentum; focus on a slow and controlled motion to maximize muscle engagement.\nProper Weight: Start with a lighter weight to master the form before progressing to heavier dumbbells.\nBreathing: Inhale as you lower the dumbbell and exhale as you lift it back up.\nIncorporating the PJR Pullover into your workout routine can be a fantastic way to enhance your tricep strength and overall upper body development!",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "DO warm up before starting the exercise. This could include light cardio, dynamic stretching, and some activation exercises for your shoulders and triceps",
+                "DO use a weight that is challenging but allows you to maintain good form throughout the entire range of motion. Don't sacrifice proper technique for heavier weight",
+                "DO keep your back flat on the bench throughout the exercise. This helps to maintain proper spinal alignment and prevents ",
+                "DO engage your core muscles. This will help to stabilize your body and prevent unwanted movement",
+                "DO lower the dumbbell in a controlled manner. Don't let it crash down behind your head",
+                "DO focus on squeezing your triceps at the top of the movement. This will help to maximize muscle activation",
+                "DO breathe properly. Inhale as you lower the dumbbell and exhale as you lift it back up",
+                "DO listen to your body. If you feel any pain, stop the exercise immediately"
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "DON'T use excessive weight. Prioritize good form over lifting heavy",
+                "DON'T allow your back to arch. Keep your back flat on the bench throughout the entire movement",
+                "DON'T let the dumbbell swing. Control the weight throughout the entire range of motion",
+                "DON'T hold your breath. Breathe steadily throughout the exercise",
+                "DON'T ignore any pain. Stop the exercise immediately if you feel any discomfort"
+            ],
+            "type": "list"
+        }
+    ],
+    "resources": ["https://www.youtube.com/shorts/rFrFs2PZzZ4"]
+}

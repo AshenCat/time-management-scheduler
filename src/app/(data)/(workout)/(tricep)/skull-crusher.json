@@ -1,0 +1,39 @@
+{
+    "title": "Skull Crusher",
+    "urlParam": "skull-crusher",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/tricep/animation-skull-crusher.gif",
+            "type": "image"
+        }
+    ],
+    "description": "The skull crusher is a highly effective exercise designed to target the triceps, specifically the triceps brachii muscle. It’s a great addition to any upper body workout routine, especially for those looking to build mass and strength in their arms. Here’s a breakdown of what you need to know about the skull crusher:\nWhat is the Skull Crusher?\nType of Exercise: The skull crusher is a push exercise that isolates the triceps. It primarily works the triceps from the elbow up to the\nlatissimus dorsi muscle of the back.\nEquipment: You can perform skull crushers using either a barbell, EZ-bar, or dumbbells. Each variation has its benefits, but they all effectively\ntarget the triceps.\nBenefits of Skull Crushers\nBuilds Tricep Mass: This exercise is excellent for increasing the size and strength of your triceps.\nImproves Stability: It also helps in enhancing shoulder stability, which is crucial for overall upper body strength.\nVersatile: Skull crushers can be incorporated into various workout routines, whether you’re focusing on arms, chest, or full-body workouts.\nHow to Perform Skull Crushers\nStarting Position: Lie on a flat bench with your feet flat on the ground. Hold the barbell or dumbbells above your chest with your arms fully\nextended.\nLowering the Weight: Slowly bend your elbows to lower the weight towards your forehead (hence the name \"skull crusher\"). Keep your upper arms\nstationary.\nReturning to Start: Extend your arms back to the starting position, squeezing your triceps at the top.\nTips for Proper Form\nControl the Movement: Avoid letting the weight drop too quickly; control is key to prevent injury.\nKeep Elbows In: Make sure your elbows stay close to your head throughout the movement to maximize tricep engagement.\nBreathe: Inhale as you lower the weight and exhale as you lift it back up.\nRecommended Sets and Reps\nStart with 4 sets of 10 to 12 reps. Adjust the weight as you become more comfortable with the movement.\nIncorporating skull crushers into your workout routine can significantly enhance your tricep development.",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "Use a weight that allows you to maintain good form throughout the entire set.",
+                "Keep your elbows in close to your head.",
+                "Lower the weight slowly and in a controlled manner.",
+                "Keep your upper arms stationary.",
+                "Squeeze your triceps at the top of the movement.",
+                "Breathe properly: Inhale as you lower the weight and exhale as you lift it back up.",
+                "Listen to your body: If you feel any pain, stop the exercise immediately."
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "Don't use a weight that is too heavy for you.",
+                "Don't let your elbows flare out to the sides.",
+                "Don't rush the movement.",
+                "Don't let your upper arms move during the exercise.",
+                "Don't forget to engage your core.",
+                "Don't ignore any pain you feel."
+            ],
+            "type": "list"
+        }
+    ],
+    "resources": ["https://www.youtube.com/shorts/D1y1-sXZDA0"]
+}

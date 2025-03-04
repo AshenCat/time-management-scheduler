@@ -5,11 +5,11 @@
   - [ ] Base Workout data
     - [x] Base Workout data bicep
     - [ ] Base Workout data tricep
-    - [ ] Base Workout data shoulder
-    - [ ] Base Workout data chest
-    - [ ] Base Workout data back
-    - [ ] Base Workout data core
-    - [ ] Base Workout data leg
-- [ ] Workout Session
-  - [ ] countdown timer hook
-  - [ ] workout transitions
+    - [-] Base Workout data shoulder
+    - [-] Base Workout data chest
+    - [-] Base Workout data back
+    - [-] Base Workout data core
+    - [-] Base Workout data leg
+- [-] Workout Session
+  - [-] countdown timer hook
+  - [-] workout transitions

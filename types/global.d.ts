@@ -10,6 +10,8 @@ interface DataMuscleGroupWorkout {
     mediaURLs: MediaURL[];
     description: string;
     articles: Article[];
+    urlParam: string;
+    resources?: string[];
 }
 
 interface Article {

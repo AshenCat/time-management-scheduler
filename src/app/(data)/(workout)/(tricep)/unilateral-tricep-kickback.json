@@ -1,0 +1,38 @@
+{
+    "title": "Unilateral Tricep Kickback",
+    "urlParam": "unilateral-tricep-kickback",
+    "mediaURLs": [
+        {
+            "url": "/static/images/workout/tricep/animation-unilateral-tricep-kickback.gif",
+            "type": "image"
+        }
+    ],
+    "description": "The unilateral tricep kickback is a fantastic isolation exercise that primarily targets the triceps muscles, helping to build strength and definition in the back of your arms. Here’s a breakdown of what it involves:\nKey Features of the Unilateral Tricep Kickback:\nIsolation Exercise: This movement focuses specifically on the triceps, allowing for concentrated muscle engagement.\nSingle Arm Focus: By performing the exercise one arm at a time, you can address any strength imbalances between your arms.\nEquipment: Typically performed with a dumbbell, but can also be done using cables or resistance bands.\nHow to Perform a Unilateral Tricep Kickback:\nStarting Position:\nStand or kneel on a bench with one knee and hand supporting your body.\nHold a dumbbell in the opposite hand, keeping your elbow close to your torso.\nExecution:\nKeeping your upper arm stationary, extend your forearm back until your arm is fully extended.\nSqueeze your triceps at the top of the movement.\nSlowly return to the starting position.\nRepetitions: Aim for 8-12 reps per arm, depending on your fitness level.\nBenefits:\nStrengthens Triceps: Enhances muscle tone and strength in the triceps.\nImproves Stability: Engaging your core during the exercise helps improve overall stability.\nVersatile: Can be incorporated into various workout routines, whether at home or in the gym.\nThis exercise is great for anyone looking to enhance their upper body strength and achieve well-defined arms!",
+    "articles": [
+        {
+            "title": "DO's",
+            "list": [
+                "Use light to moderate weights to maintain control and form.",
+                "Keep your elbow close to your body throughout the movement.",
+                "Engage your core to stabilize your body.",
+                "Perform the exercise slowly and with control.",
+                "Breathe out as you extend your arm and inhale as you return to the starting position.",
+                "Focus on squeezing your triceps at the top of the movement."
+            ],
+            "type": "list"
+        },
+        {
+            "title": "DONT's",
+            "list": [
+                "Don't use weights that are too heavy, which can compromise your form.",
+                "Don't let your elbow flare out to the side.",
+                "Don't rush the movement; take your time to ensure proper technique.",
+                "Don't swing your arm; keep the motion controlled.",
+                "Don't forget to maintain a neutral wrist position.",
+                "Don't ignore any discomfort or pain; stop if you feel any."
+            ],
+            "type": "list"
+        }
+    ],
+    "resources": ["https://www.youtube.com/shorts/MlI2HzCzjv8"]
+}
