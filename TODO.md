@@ -13,3 +13,20 @@
 - [-] Workout Session
   - [-] countdown timer hook
   - [-] workout transitions
+
+- [ ] Dockerize application
+  - [x] spawn database service
+  - [ ] dockerize client app
+
+- [ ] Auth
+  - [ ] safeguard routes
+  - [ ] error handling
+
+- [ ] finances
+  - [ ] finance routes
+    - [ ] auth guard
+    - [ ] group-by query param
+  - [ ] dashboard
+    - [ ] expenses graph
+    - [ ] income graph
+    - [ ] investment graph

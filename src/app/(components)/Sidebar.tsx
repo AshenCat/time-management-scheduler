@@ -1,31 +1,24 @@
-"use client";
-
 import Link from "next/link";
 import React from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Accordion from "./(reusable)/Accordion/Accordion";
-import { createQueryString } from "../(lib)/commons";
 import { FaArrowLeft } from "react-icons/fa6";
-import { MUSCLE_GROUPS } from "../(lib)/client-commons";
+import Image from "next/image";
+import Dropdown from "@/app/(components)/(reusable)/dropdown/DropDown";
+import { FaUser } from "react-icons/fa6";
+import { auth, signIn } from "@/../auth";
+import SignoutForm from "./SignoutForm";
+import SidebarNavOptions from "./SidebarNavOptions";
 
-function Sidebar() {
-    const pathname = usePathname();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
-    const workoutAccordionStateQuery = searchParams.get(
-        "workout-accordion-state"
-    );
-
-    const workoutAccordionState = workoutAccordionStateQuery === "true";
-
-    const navItemSelectedClassName =
-        "bg-[color:--color-p-2] text-[color:--color-s-1] flex-col";
-
-    console.log(pathname);
+async function Sidebar() {
+    const session = await auth();
+    // console.log("session");
+    // console.log(session);
+    const userImg = (() => {
+        if (session?.user && session.user?.image) return session.user.image;
+        else return null;
+    })();
 
     return (
-        <header className="basis-48 shrink-0 h-full text-[color:--color-neutral] bg-[color:--color-s-2] relative">
+        <header className="basis-48 shrink-0 h-full text-[color:--color-neutral] bg-[color:--color-s-2] relative flex flex-col">
             <h2 className="underline underline-offset-8 p-4 text-xl content-baseline flex justify-between">
                 <Link href="/">
                     <span className="underline decoration-indigo-500">
@@ -37,54 +30,50 @@ function Sidebar() {
                     <FaArrowLeft />
                 </button>
             </h2>
-            <nav className="flex flex-col hover:*:bg-[color:--color-p-2] hover:*:text-[color:--color-s-1] *:flex *:text-center *:[&>*]:w-full">
-                <div
-                    className={
-                        pathname.toLowerCase().includes("workout") ||
-                        workoutAccordionState
-                            ? navItemSelectedClassName
-                            : ""
-                    }
-                >
-                    <Accordion
-                        open={workoutAccordionState}
-                        label="Workout"
-                        onClick={() => {
-                            // if (!pathname.toLowerCase().endsWith("workout"))
-                            router.push(
-                                "?" +
-                                    createQueryString(
-                                        "workout-accordion-state",
-                                        JSON.stringify(!workoutAccordionState)
-                                    )
-                            );
+            <SidebarNavOptions />
+            <div className="mt-auto">
+                {session?.user && (
+                    <Dropdown
+                        className=""
+                        popUpClassName="navbar"
+                        options={[<SignoutForm key={"nav-signout"} />]}
+                    >
+                        <div className="flex items-center pr-2">
+                            <div className="flex items-center">
+                                {userImg && (
+                                    <Image
+                                        src={userImg as string}
+                                        width={35}
+                                        height={35}
+                                        alt={session.user?.name || "User image"}
+                                        className="object-cover rounded-full"
+                                    />
+                                )}
+                                {!userImg && (
+                                    <span>
+                                        <FaUser />
+                                    </span>
+                                )}
+                            </div>
+                            <span className="font-bold px-2 text-xs sm:text-base">
+                                {session.user?.name}
+                            </span>
+                        </div>
+                    </Dropdown>
+                )}
+                {!session?.user && (
+                    <form
+                        action={async () => {
+                            "use server";
+                            await signIn();
                         }}
                     >
-                        <div className="flex flex-col">
-                            {MUSCLE_GROUPS.map((item, index) => (
-                                <Link
-                                    href={`/workout/${item}?`}
-                                    key={`item-${index}`}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="hover:scale-110 p-4 capitalize"
-                                >
-                                    {item}
-                                </Link>
-                            ))}
-                        </div>
-                    </Accordion>
-                </div>
-
-                <div
-                    className={
-                        pathname.toLowerCase().includes("calendar")
-                            ? navItemSelectedClassName
-                            : ""
-                    }
-                >
-                    <Link href="/calendar">Calendar</Link>
-                </div>
-            </nav>
+                        <button className="p-4" type="submit">
+                            Sign in with Google
+                        </button>
+                    </form>
+                )}
+            </div>
         </header>
     );
 }
