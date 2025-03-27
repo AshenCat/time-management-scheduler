@@ -22,3 +22,7 @@ export const listCurrentSearchParams = (
 
     return queryString;
 };
+
+export const checkIfStringNull = (str: string) => {
+    return str === "null" ? null : str;
+};

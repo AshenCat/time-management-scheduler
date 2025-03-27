@@ -1,5 +1,5 @@
 import React from "react";
-import { auth, signIn } from "@/../auth";
+import { auth } from "@/../auth";
 import Dashboard from "./Dashboard";
 
 async function page() {
@@ -8,9 +8,9 @@ async function page() {
     if (!session) return <div>Seems like you are not logged in</div>;
 
     return (
-        <div>
-            <Dashboard />
-        </div>
+        <>
+            <Dashboard session={session} />
+        </>
     );
 }
 

@@ -1,23 +1,21 @@
-"use client";
-import useFetch from "@/app/(components)/(reusable)/hooks/useFetch";
-import React, { useState } from "react";
+import { getExpenses } from "@/app/actions";
+import { Session } from "next-auth";
+import React from "react";
+import AddExpensesForm from "./(mutations)/AddExpenses";
+import ExpensesList from "./(graphs)/ExpensesList";
 
-function Dashboard() {
-    const [groupBy, setGroupBy] = useState<
-        "weekly" | "monthly" | "yearly" | "all-time"
-    >("yearly");
-    const [financeDataLoading, financeDataError, financeData] = useFetch(
-        `/api/finance?group-by=${groupBy}`,
-        {},
-        [groupBy]
+async function Dashboard({ session }: { session: Session }) {
+    const expenses = await getExpenses(session.user.id);
+    console.log("Dashboard - expenses");
+    console.log(expenses);
+
+    return (
+        <main className="w-9/12 mx-auto">
+            <ExpensesList expenses={expenses} />
+            <hr />
+            <AddExpensesForm userId={session.user.id} />
+        </main>
     );
-    console.log("financeDataLoading======================");
-    console.log(financeDataLoading);
-    console.log("financeDataError======================");
-    console.log(financeDataError);
-    console.log("financeData======================");
-    console.log(financeData);
-    return <div></div>;
 }
 
 export default Dashboard;

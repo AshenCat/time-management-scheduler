@@ -1,26 +1,26 @@
 import mongoose, { Schema } from "mongoose";
-import { requiredString, subscriptionInterval } from "../common";
+import { requiredString, SUBSCRIPTION_INTERVAL } from "../common";
 
-// type subscriptionIntervalType = (typeof subscriptionInterval)[number];
+// type subscriptionIntervalType = (typeof SUBSCRIPTION_INTERVAL)[number];
 
 interface ExpenseAttrs {
     cost: number;
     name: string;
-    subscriptionInterval?: string;
+    userId: string;
+    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
     date?: Date;
+    tags?: string[];
     notes?: string;
 }
 
 interface ExpenseDoc extends mongoose.Document {
     cost: number;
     name: string;
-    subscriptionInterval?: string;
+    userId: string;
+    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
     date?: Date;
+    tags?: string[];
     notes?: string;
-}
-
-interface ExpenseModel extends mongoose.Model<ExpenseDoc> {
-    build(attrs: ExpenseAttrs): ExpenseDoc;
 }
 
 const expenseSchema = new Schema({
@@ -29,25 +29,26 @@ const expenseSchema = new Schema({
         required: true,
     },
     name: requiredString,
+    userId: requiredString,
     subscriptionInterval: {
         type: String,
-        enum: subscriptionInterval,
+        enum: [...SUBSCRIPTION_INTERVAL.values()],
     },
     date: {
         type: Date,
     },
+    tags: [String],
     notes: String,
 });
 
-expenseSchema.statics.build = (attrs: ExpenseAttrs) => {
-    return new Expense(attrs);
-};
+const Expense = () =>
+    mongoose.model<ExpenseDoc, mongoose.Model<ExpenseDoc>>(
+        "Expense",
+        expenseSchema
+    );
 
-const Expense = mongoose.model<ExpenseDoc, ExpenseModel>(
-    "Expense",
-    expenseSchema
-);
-
-export { Expense };
+export default (mongoose.models.Expense || Expense()) as ReturnType<
+    typeof Expense
+>;
 
 export type { ExpenseAttrs, ExpenseDoc };

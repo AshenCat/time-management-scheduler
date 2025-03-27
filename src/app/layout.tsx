@@ -33,7 +33,12 @@ export default function RootLayout({
                 <SessionWrapper>
                     <Sidebar />
                     {children}
-                    <ToastContainer position="bottom-right" closeOnClick />
+                    <ToastContainer 
+                    position="bottom-right"
+                    theme="dark"
+                    pauseOnHover={true}
+                    autoClose={5000}
+                    closeOnClick />
                 </SessionWrapper>
             </body>
         </html>
