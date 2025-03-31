@@ -1,6 +1,6 @@
 "use client";
 import { EXPENSE_TAGS, SUBSCRIPTION_INTERVAL } from "@/app/(db)/common";
-import { addExpense } from "@/app/actions";
+import { editExpense } from "@/app/actions";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
     message: null as null | string,
-    timestamp: null as null | number,
+    timestamp: null as number | null,
 };
 
 const SubmitButton = () => {
@@ -21,13 +21,22 @@ const SubmitButton = () => {
             type="submit"
             aria-disabled={pending}
         >
-            Add Expense
+            Edit Expense
         </button>
     );
 };
 
-function AddExpensesForm({ userId }: { userId: string }) {
-    const [state, addExpenseAction] = useActionState(addExpense, initialState);
+function EditExpenses({
+    expense,
+    onCancel,
+}: {
+    expense: LeanExpenseWithId | null;
+    onCancel: () => void;
+}) {
+    const [state, editExpenseAction] = useActionState(
+        editExpense,
+        initialState
+    );
 
     const [showItem, setShowItem] = useState({
         subscriptionInterval: true,
@@ -35,53 +44,29 @@ function AddExpensesForm({ userId }: { userId: string }) {
         notes: false,
     });
 
-    const { message } = state;
-
-    // const [selectedExpenseTags, setSelectedExpenseTags] = useState<
-    //     (typeof EXPENSE_TAGS)[number][]
-    // >([]);
-
-    // const modifyFormData = (
-    //     action: "add" | "remove",
-    //     tag: (typeof EXPENSE_TAGS)[number]
-    // ) => {
-    //     if (action === "add") {
-    //         setSelectedExpenseTags((prev) => [...prev, tag]);
-    //     } else if (action === "remove") {
-    //         setSelectedExpenseTags((prev) =>
-    //             prev.filter((currTag) => currTag !== tag)
-    //         );
-    //     } else {
-    //         throw new Error("Add Expense Form Tag Error");
-    //     }
-    // };
-
-    // TODO: test tags on actions.tsx
-
-    // useEffect(() => {
-    //     // not the best solution but it will work fine at this tiny scale
-    //     const form = document.getElementById(
-    //         "add-expense-form"
-    //     ) as HTMLFormElement;
-    //     const formData = new FormData(form);
-    //     formData.delete("tags");
-
-    //     formData.append("tags", JSON.stringify(selectedExpenseTags));
-
-    //     console.log("formData");
-    //     console.log(formData.getAll("tags"));
-    // }, [selectedExpenseTags]);
-
     useEffect(() => {
+        const { message } = state;
         if (message?.includes("Success")) toast.success(message);
         if (message?.includes("Error")) toast.error(message);
-    }, [message]);
+    }, [state]);
+
+    if (!expense) {
+        return <></>;
+    }
+
+    const { cost, name, userId, subscriptionInterval, date, tags, notes, _id } =
+        expense;
+
+    console.log("expense", expense);
 
     return (
-        <form
-            action={addExpenseAction}
+        <motion.form
+            action={editExpenseAction}
             id="add-expense-form"
-            className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2]"
+            className="p-2 max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2]"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
         >
             <div className="flex flex-col">
                 <label htmlFor="cost" className="capitalize">
@@ -93,6 +78,7 @@ function AddExpensesForm({ userId }: { userId: string }) {
                     placeholder="Enter cost value"
                     type="number"
                     className=""
+                    defaultValue={cost}
                     required
                 />
             </div>
@@ -104,20 +90,27 @@ function AddExpensesForm({ userId }: { userId: string }) {
                     name="name"
                     id="name"
                     placeholder="Enter expense name"
+                    defaultValue={name}
                     className=""
                     required
                 />
             </div>
-            <div className="flex flex-col">
-                <input
-                    name="userId"
-                    id="userId"
-                    defaultValue={userId}
-                    className=""
-                    required
-                    hidden
-                />
-            </div>
+            <input
+                name="userId"
+                id="userId"
+                defaultValue={userId}
+                className=""
+                required
+                hidden
+            />
+            <input
+                name="expenseId"
+                id="expenseId"
+                defaultValue={_id}
+                className=""
+                required
+                hidden
+            />
             <div className="flex flex-col">
                 <label htmlFor="date" className="capitalize">
                     date:
@@ -128,7 +121,11 @@ function AddExpensesForm({ userId }: { userId: string }) {
                     placeholder="Enter date"
                     type="date"
                     className=""
-                    defaultValue={new Date().toISOString().split("T")[0]}
+                    defaultValue={
+                        new Date(date ? date : new Date())
+                            .toISOString()
+                            .split("T")[0]
+                    }
                     max={new Date().toISOString().split("T")[0]}
                     disabled={showItem.subscriptionInterval}
                 />
@@ -170,6 +167,7 @@ function AddExpensesForm({ userId }: { userId: string }) {
                                     placeholder="Enter subscription-interval value"
                                     type="radio"
                                     defaultValue="unset"
+                                    defaultChecked={!subscriptionInterval}
                                     className="mr-1"
                                 />
                                 <label htmlFor={`subscription-interval-unset`}>
@@ -188,6 +186,9 @@ function AddExpensesForm({ userId }: { userId: string }) {
                                             placeholder="Enter subscription-interval value"
                                             type="radio"
                                             defaultValue={val}
+                                            defaultChecked={
+                                                subscriptionInterval === val
+                                            }
                                             className="mr-1"
                                         />
                                         <label
@@ -202,40 +203,6 @@ function AddExpensesForm({ userId }: { userId: string }) {
                     )}
                 </AnimatePresence>
             </div>
-            {/* <div className="flex flex-col">
-                <span className="capitalize">tags:</span>
-                <div className="flex flex-wrap">
-                    {selectedExpenseTags.map((tag, index) => (
-                        <span
-                            key={tag + index + "selected"}
-                            className="capitalize"
-                        >
-                            {tag}{" "}
-                            <button
-                                className="ml-1 bg-gray-500 text-white"
-                                type="button"
-                                onClick={() => modifyFormData("remove", tag)}
-                            >
-                                <FaXmark />
-                            </button>
-                        </span>
-                    ))}
-                </div>
-                <div className="flex flex-wrap">
-                    {[...EXPENSE_TAGS.values()]
-                        .filter((tag) => !selectedExpenseTags.includes(tag))
-                        .map((tag, index) => (
-                            <button
-                                className="flex-1 basis-auto mx-auto"
-                                key={`${tag}-${index}`}
-                                type="button"
-                                onClick={() => modifyFormData("add", tag)}
-                            >
-                                {tag}
-                            </button>
-                        ))}
-                </div>
-            </div> */}
             <div>
                 <div>
                     <button
@@ -272,6 +239,7 @@ function AddExpensesForm({ userId }: { userId: string }) {
                                         placeholder="Enter tag value"
                                         type="radio"
                                         defaultValue={val}
+                                        defaultChecked={tags?.[0] === val}
                                         className="mr-1"
                                     />
                                     <label htmlFor={`tag-${val}`}>{val}</label>
@@ -308,15 +276,19 @@ function AddExpensesForm({ userId }: { userId: string }) {
                             exit={{ opacity: 0 }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
+                            defaultValue={notes}
                         />
                     )}
                 </AnimatePresence>
             </div>
-            <div>
+            <div className="flex justify-end gap-2">
                 <SubmitButton />
+                <button type="button" onClick={() => onCancel()}>
+                    Cancel
+                </button>
             </div>
-        </form>
+        </motion.form>
     );
 }
 
-export default AddExpensesForm;
+export default EditExpenses;

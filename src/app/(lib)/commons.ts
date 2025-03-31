@@ -26,3 +26,7 @@ export const listCurrentSearchParams = (
 export const checkIfStringNull = (str: string) => {
     return str === "null" ? null : str;
 };
+
+export const isStringEmptyOrNullish = (str: string | null | undefined) => {
+    return !str || str.trim() === "";
+};

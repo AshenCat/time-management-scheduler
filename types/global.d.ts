@@ -25,3 +25,18 @@ interface MediaURL {
     url: string;
     type: "image" | "video";
 }
+
+interface ExpenseAttrs {
+    cost: number;
+    name: string;
+    userId: string;
+    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
+    date?: Date;
+    tags?: string[];
+    notes?: string;
+}
+
+interface LeanExpenseWithId extends ExpenseAttrs {
+    _id: string;
+    __v?: number;
+}

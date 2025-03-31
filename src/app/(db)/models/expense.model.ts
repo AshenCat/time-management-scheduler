@@ -3,16 +3,6 @@ import { requiredString, SUBSCRIPTION_INTERVAL } from "../common";
 
 // type subscriptionIntervalType = (typeof SUBSCRIPTION_INTERVAL)[number];
 
-interface ExpenseAttrs {
-    cost: number;
-    name: string;
-    userId: string;
-    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
-    date?: Date;
-    tags?: string[];
-    notes?: string;
-}
-
 interface ExpenseDoc extends mongoose.Document {
     cost: number;
     name: string;
@@ -51,4 +41,4 @@ export default (mongoose.models.Expense || Expense()) as ReturnType<
     typeof Expense
 >;
 
-export type { ExpenseAttrs, ExpenseDoc };
+export type { ExpenseDoc };
