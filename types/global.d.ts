@@ -34,6 +34,7 @@ interface ExpenseAttrs {
     date?: Date;
     tags?: string[];
     notes?: string;
+    deleted?: boolean;
 }
 
 interface LeanExpenseWithId extends ExpenseAttrs {

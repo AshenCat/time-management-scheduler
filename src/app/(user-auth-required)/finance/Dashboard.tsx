@@ -6,7 +6,7 @@ import ExpensesList from "./(graphs)/ExpensesList";
 
 async function Dashboard({ session }: { session: Session }) {
     const expensesStringified = await getExpenses({ userId: session.user.id });
-    const expenses = JSON.parse(expensesStringified);
+    const expenses = JSON.parse(expensesStringified) as LeanExpenseWithId[];
     // console.log("Dashboard - expenses");
     // console.log(Util.inspect(expenses, false, null, true));
 
@@ -14,7 +14,10 @@ async function Dashboard({ session }: { session: Session }) {
         <main className="overflow-auto flex-1">
             <div className="w-9/12 mx-auto relative">
                 <h1>userId: {session.user.id}</h1>
-                <ExpensesList expenses={expenses} userId={session.user.id} />
+                <ExpensesList
+                    expenses={expenses.sort((_, __) => -1)}
+                    userId={session.user.id}
+                />
             </div>
         </main>
     );

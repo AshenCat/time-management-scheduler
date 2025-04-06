@@ -27,7 +27,8 @@ ul, li {
   padding: 0;
 } */
 
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
 }

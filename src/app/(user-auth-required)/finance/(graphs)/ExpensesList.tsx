@@ -1,10 +1,12 @@
 "use client";
 import dayjs from "dayjs";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import DeleteExpenses from "../(mutations)/DeleteExpenses";
 import AddExpensesForm from "../(mutations)/AddExpenses";
 import EditExpenses from "../(mutations)/EditExpenses";
 import { AnimatePresence } from "motion/react";
+import { EXPENSE_TAG_COLOR_MAP } from "@/app/(lib)/client-commons";
+import { motion } from "motion/react";
 
 function ExpensesList({
     expenses,
@@ -44,6 +46,8 @@ function ExpensesList({
 
     const [selectedExpense, setSelectedExpense] =
         useState<LeanExpenseWithId | null>(null);
+    const [addExpenseState, setAddExpenseState] = useState(false);
+
     return (
         <div className="">
             <h1>Expenses Overview: </h1>
@@ -52,7 +56,34 @@ function ExpensesList({
                 {nonRecurringExpenses} for the month of{" "}
                 {dayjs(new Date()).format("MMMM")}
             </div>
-            <AddExpensesForm userId={userId} />
+            <hr />
+            <div className="my-4">
+                <button
+                    type="button"
+                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-2 px-4"
+                    onClick={() => setAddExpenseState((prev) => !prev)}
+                    disabled={addExpenseState}
+                >
+                    New Expense
+                </button>
+            </div>
+            <hr />
+            <AnimatePresence>
+                {addExpenseState && (
+                    <motion.div
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <AddExpensesForm
+                            userId={userId}
+                            toggleShowState={() =>
+                                setAddExpenseState((prev) => !prev)
+                            }
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <hr />
             <div className="flex flex-col gap-2">
                 {expenses.map((expense, index) => {
@@ -66,8 +97,13 @@ function ExpensesList({
                         _id,
                     } = expense;
                     return (
-                        <Fragment key={name + index}>
-                            <div className="flex flex-col border-2">
+                        <AnimatePresence key={name + index}>
+                            <motion.div
+                                className="flex flex-col border-2"
+                                exit={{ opacity: 0 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
                                 <div className="flex">
                                     <div
                                         className={`flex-grow basis-auto p-2 transition-all ${
@@ -85,21 +121,30 @@ function ExpensesList({
                                                       "YYYY-MMM-DD"
                                                   )}
                                         </div>
-                                        <div className="flex">
-                                            {[tags].map((tag, index) => (
-                                                <div
-                                                    key={
-                                                        "" +
-                                                        name +
-                                                        _id +
-                                                        tag +
-                                                        index
-                                                    }
-                                                    className="capitalize rounded-sm px-2 bg-green-500"
-                                                >
-                                                    {tag}
-                                                </div>
-                                            ))}
+                                        <div className="flex gap-2">
+                                            {tags &&
+                                                tags.map((tag, index) => (
+                                                    <div
+                                                        key={
+                                                            "" +
+                                                            name +
+                                                            _id +
+                                                            tag +
+                                                            index
+                                                        }
+                                                        className={`capitalize rounded-sm px-2`}
+                                                        style={{
+                                                            backgroundColor:
+                                                                EXPENSE_TAG_COLOR_MAP.get(
+                                                                    tag
+                                                                ),
+                                                        }}
+                                                    >
+                                                        <span className="drop-shadow-lg">
+                                                            {tag}
+                                                        </span>
+                                                    </div>
+                                                ))}
                                         </div>
                                         {notes && notes.trim() !== "" && (
                                             <div className="mt-2">
@@ -128,14 +173,14 @@ function ExpensesList({
                                     {selectedExpense?._id === _id && (
                                         <EditExpenses
                                             expense={selectedExpense}
-                                            onCancel={() =>
-                                                setSelectedExpense(null)
-                                            }
+                                            removeSelectedExpense={() => {
+                                                setSelectedExpense(null);
+                                            }}
                                         />
                                     )}
                                 </AnimatePresence>
-                            </div>
-                        </Fragment>
+                            </motion.div>
+                        </AnimatePresence>
                     );
                 })}
             </div>

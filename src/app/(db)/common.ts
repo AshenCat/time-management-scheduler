@@ -22,15 +22,18 @@ export const EXPENSE_TAGS = [
     "survival",
     "grocery",
     "charity",
+    "investment",
 ] as const;
 
-/**
- *
- * @param values const array source
- * @param val value to look out for
- * @returns boolean
- */
+// use when checking if val is in const array
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isInConst<T>(val: any, values: readonly T[]): val is T {
     return values.includes(val);
+}
+
+// use when checking if every items in val is in const array
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function arrayIsInConst<T>(val: any, values: readonly T[]): val is T {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return val.every((v: any) => values.includes(v));
 }

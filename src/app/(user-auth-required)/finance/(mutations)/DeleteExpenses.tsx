@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
     message: null as null | string,
+    timestamp: null as null | number,
 };
 
 const SubmitButton = () => {
@@ -32,12 +33,11 @@ function DeleteExpenses({
         initialState
     );
 
-    const { message } = state;
-
     useEffect(() => {
+        const { message } = state;
         if (message?.includes("Success")) toast.success(message);
         if (message?.includes("Error")) toast.error(message);
-    }, [message]);
+    }, [state]);
 
     return (
         <form action={deleteExpenseAction} className="flex flex-1">

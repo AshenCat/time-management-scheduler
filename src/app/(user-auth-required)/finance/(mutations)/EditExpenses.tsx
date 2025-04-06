@@ -1,12 +1,12 @@
 "use client";
 import { EXPENSE_TAGS, SUBSCRIPTION_INTERVAL } from "@/app/(db)/common";
 import { editExpense } from "@/app/actions";
-import { AnimatePresence, motion } from "motion/react";
-import React, { useActionState, useEffect, useState } from "react";
+import { motion } from "motion/react";
+import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { FaMinus, FaPlus } from "react-icons/fa6";
 // import { FaXmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import Select from "react-select";
 
 const initialState = {
     message: null as null | string,
@@ -28,27 +28,24 @@ const SubmitButton = () => {
 
 function EditExpenses({
     expense,
-    onCancel,
+    removeSelectedExpense,
 }: {
     expense: LeanExpenseWithId | null;
-    onCancel: () => void;
+    removeSelectedExpense: () => void;
 }) {
     const [state, editExpenseAction] = useActionState(
         editExpense,
         initialState
     );
 
-    const [showItem, setShowItem] = useState({
-        subscriptionInterval: true,
-        tag: false,
-        notes: false,
-    });
-
     useEffect(() => {
         const { message } = state;
-        if (message?.includes("Success")) toast.success(message);
+        if (message?.includes("Success")) {
+            toast.success(message);
+            removeSelectedExpense();
+        }
         if (message?.includes("Error")) toast.error(message);
-    }, [state]);
+    }, [state, removeSelectedExpense]);
 
     if (!expense) {
         return <></>;
@@ -57,12 +54,10 @@ function EditExpenses({
     const { cost, name, userId, subscriptionInterval, date, tags, notes, _id } =
         expense;
 
-    console.log("expense", expense);
-
     return (
         <motion.form
             action={editExpenseAction}
-            id="add-expense-form"
+            id="edit-expense-form"
             className="p-2 max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2]"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
@@ -127,163 +122,70 @@ function EditExpenses({
                             .split("T")[0]
                     }
                     max={new Date().toISOString().split("T")[0]}
-                    disabled={showItem.subscriptionInterval}
                 />
             </div>
             <div className="flex flex-col">
                 <div>
-                    <button
-                        className="mr-2"
-                        type="button"
-                        onClick={() =>
-                            setShowItem((prev) => ({
-                                ...prev,
-                                subscriptionInterval:
-                                    !prev.subscriptionInterval,
-                            }))
-                        }
-                    >
-                        {showItem.subscriptionInterval ? (
-                            <FaMinus />
-                        ) : (
-                            <FaPlus />
-                        )}
-                    </button>
                     <span className="capitalize">subscription interval:</span>
                 </div>
-                <AnimatePresence>
-                    {showItem.subscriptionInterval && (
-                        <motion.div
-                            className="flex flex-wrap"
-                            key="AddExpenseSubscriptionInterval"
-                            exit={{ opacity: 0 }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                        >
-                            <div className="flex-1 basis-auto mx-auto">
-                                <input
-                                    name="subscription-interval"
-                                    id={`subscription-interval-unset`}
-                                    placeholder="Enter subscription-interval value"
-                                    type="radio"
-                                    defaultValue="unset"
-                                    defaultChecked={!subscriptionInterval}
-                                    className="mr-1"
-                                />
-                                <label htmlFor={`subscription-interval-unset`}>
-                                    unset
-                                </label>
-                            </div>
-                            {[...SUBSCRIPTION_INTERVAL.values()].map(
-                                (val, index) => (
-                                    <div
-                                        className="flex-1 basis-auto mx-auto"
-                                        key={`subscriptionInterval-${index}`}
-                                    >
-                                        <input
-                                            name="subscription-interval"
-                                            id={`subscription-interval-${val}`}
-                                            placeholder="Enter subscription-interval value"
-                                            type="radio"
-                                            defaultValue={val}
-                                            defaultChecked={
-                                                subscriptionInterval === val
-                                            }
-                                            className="mr-1"
-                                        />
-                                        <label
-                                            htmlFor={`subscription-interval-${val}`}
-                                        >
-                                            {val}
-                                        </label>
-                                    </div>
-                                )
-                            )}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                <div className="flex flex-wrap">
+                    <Select
+                        className="flex-1 text-black"
+                        placeholder="Select Subscription Interval"
+                        aria-label="Subscription Interval selector"
+                        instanceId="add-expense-Subscription-Interval"
+                        defaultInputValue={subscriptionInterval ?? ""}
+                        options={[
+                            { value: "unset", label: "unset" },
+                            ...[...SUBSCRIPTION_INTERVAL].map((val) => ({
+                                value: val,
+                                label: val,
+                            })),
+                        ]}
+                        name="subscription-interval"
+                    />
+                </div>
             </div>
             <div>
                 <div>
-                    <button
-                        className="mr-2"
-                        type="button"
-                        onClick={() =>
-                            setShowItem((prev) => ({
-                                ...prev,
-                                tag: !prev.tag,
-                            }))
-                        }
-                    >
-                        {showItem.tag ? <FaMinus /> : <FaPlus />}
-                    </button>
                     <span className="capitalize">tags:</span>
                 </div>
-                <AnimatePresence>
-                    {showItem.tag && (
-                        <motion.div
-                            className="flex flex-wrap"
-                            key="AddExpenseTag"
-                            exit={{ opacity: 0 }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                        >
-                            {[...EXPENSE_TAGS.values()].map((val, index) => (
-                                <fieldset
-                                    className="flex-1 basis-auto mx-auto"
-                                    key={`val-${index}`}
-                                >
-                                    <input
-                                        name="tag"
-                                        id={`tag-${val}`}
-                                        placeholder="Enter tag value"
-                                        type="radio"
-                                        defaultValue={val}
-                                        defaultChecked={tags?.[0] === val}
-                                        className="mr-1"
-                                    />
-                                    <label htmlFor={`tag-${val}`}>{val}</label>
-                                </fieldset>
-                            ))}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                <div className="flex flex-wrap">
+                    <Select
+                        className="flex-1 text-black"
+                        defaultValue={tags?.map((tag) => ({
+                            value: tag,
+                            label: tag,
+                        }))}
+                        options={[...EXPENSE_TAGS].map((val) => ({
+                            value: val,
+                            label: val,
+                        }))}
+                        placeholder="Select tags"
+                        aria-label="tag selector"
+                        instanceId="add-expense-tag"
+                        name="tags"
+                        isMulti
+                        delimiter=","
+                    />
+                </div>
             </div>
             <div className="flex flex-col">
                 <div>
-                    <button
-                        className="mr-2"
-                        type="button"
-                        onClick={() =>
-                            setShowItem((prev) => ({
-                                ...prev,
-                                notes: !prev.notes,
-                            }))
-                        }
-                    >
-                        {showItem.notes ? <FaMinus /> : <FaPlus />}
-                    </button>
                     <span className="capitalize">notes:</span>
                 </div>
-                <AnimatePresence>
-                    {showItem.notes && (
-                        <motion.textarea
-                            name="notes"
-                            id="notes"
-                            placeholder="Enter notes"
-                            className=""
-                            key="AddExpenseNotes"
-                            exit={{ opacity: 0 }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            defaultValue={notes}
-                        />
-                    )}
-                </AnimatePresence>
+                <textarea
+                    name="notes"
+                    id="notes"
+                    placeholder="Enter notes"
+                    className=""
+                    key="editExpenseNotes"
+                    defaultValue={notes}
+                />
             </div>
             <div className="flex justify-end gap-2">
                 <SubmitButton />
-                <button type="button" onClick={() => onCancel()}>
+                <button type="button" onClick={() => removeSelectedExpense()}>
                     Cancel
                 </button>
             </div>

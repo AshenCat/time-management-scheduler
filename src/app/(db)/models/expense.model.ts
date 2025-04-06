@@ -11,25 +11,30 @@ interface ExpenseDoc extends mongoose.Document {
     date?: Date;
     tags?: string[];
     notes?: string;
+    deleted?: boolean;
 }
 
-const expenseSchema = new Schema({
-    cost: {
-        type: Number,
-        required: true,
+const expenseSchema = new Schema(
+    {
+        cost: {
+            type: Number,
+            required: true,
+        },
+        name: requiredString,
+        userId: requiredString,
+        subscriptionInterval: {
+            type: String,
+            enum: [...SUBSCRIPTION_INTERVAL.values()],
+        },
+        date: {
+            type: Date,
+        },
+        tags: [String],
+        notes: String,
+        deleted: { type: Boolean, default: false },
     },
-    name: requiredString,
-    userId: requiredString,
-    subscriptionInterval: {
-        type: String,
-        enum: [...SUBSCRIPTION_INTERVAL.values()],
-    },
-    date: {
-        type: Date,
-    },
-    tags: [String],
-    notes: String,
-});
+    { timestamps: true }
+);
 
 const Expense = () =>
     mongoose.model<ExpenseDoc, mongoose.Model<ExpenseDoc>>(

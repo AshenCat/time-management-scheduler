@@ -1,7 +1,12 @@
 "use server";
 
 import dayjs from "dayjs";
-import { EXPENSE_TAGS, isInConst, SUBSCRIPTION_INTERVAL } from "./(db)/common";
+import {
+    arrayIsInConst,
+    EXPENSE_TAGS,
+    isInConst,
+    SUBSCRIPTION_INTERVAL,
+} from "./(db)/common";
 import Expense from "./(db)/models/expense.model";
 import { connectDB } from "./(db)/mongodb";
 import Util from "util";
@@ -31,8 +36,20 @@ export async function getExpenses({
             }
         }
         await connectDB();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const query = { userId } as FilterQuery<{ [key: string]: any }>;
+        const query = {
+            $or: [
+                {
+                    deleted: false,
+                },
+                {
+                    deleted: undefined,
+                },
+            ],
+            $and: [{ userId }],
+        } as FilterQuery<{
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            [key: string]: any;
+        }>;
 
         if (from) {
             query.date = { $gte: from, $lt: to };
@@ -58,10 +75,11 @@ export async function addExpense(
     const userId = checkIfStringNull(String(formData.get("userId")));
     const date = checkIfStringNull(String(formData.get("date")));
     const notes = checkIfStringNull(String(formData.get("notes")));
-    const tag = checkIfStringNull(String(formData.get("tag")));
+    const tags = checkIfStringNull(String(formData.get("tags")));
 
-    const newExpenseObj: { [key: string]: string | number | [string] | null } =
-        {};
+    const newExpenseObj: {
+        [key: string]: string | number | string[] | boolean | null;
+    } = {};
 
     if (!cost || isNaN(cost) || cost < 1)
         return {
@@ -100,7 +118,11 @@ export async function addExpense(
     }
     newExpenseObj.userId = userId;
 
-    if (!dayjs(date).isValid()) {
+    if (
+        !subscriptionInterval &&
+        subscriptionInterval === "unset" &&
+        !dayjs(date).isValid()
+    ) {
         return {
             message: "Error: entered date invalid",
             timestamp: Date.now(),
@@ -111,10 +133,10 @@ export async function addExpense(
     // no check for notes
     newExpenseObj.notes = notes;
 
-    if (!isInConst(tag, EXPENSE_TAGS) && tag) {
+    if (tags && !arrayIsInConst(tags.split(","), EXPENSE_TAGS)) {
         return { message: "Error: entered tag invalid", timestamp: Date.now() };
     }
-    newExpenseObj.tags = isInConst(tag, EXPENSE_TAGS) ? [tag] : null;
+    newExpenseObj.tags = tags?.split(",") ?? null;
 
     console.log(Util.inspect(newExpenseObj, false, null, true));
 
@@ -148,13 +170,13 @@ export async function editExpense(
     const expenseId = checkIfStringNull(String(formData.get("expenseId")));
     const date = checkIfStringNull(String(formData.get("date")));
     const notes = checkIfStringNull(String(formData.get("notes")));
-    const tag = checkIfStringNull(String(formData.get("tag")));
+    const tags = checkIfStringNull(String(formData.get("tags")));
 
-    for (const val of formData.entries()) {
-        console.log(val);
-    }
+    // for (const val of formData.entries()) {
+    //     console.log(val);
+    // }
 
-    const editExpenseObj: { [key: string]: string | number | [string] | null } =
+    const editExpenseObj: { [key: string]: string | number | string[] | null } =
         {};
 
     if (!cost || isNaN(cost) || cost < 1)
@@ -200,7 +222,10 @@ export async function editExpense(
         };
     }
 
-    if (!dayjs(date).isValid()) {
+    if (
+        (!subscriptionInterval || subscriptionInterval === "unset") &&
+        !dayjs(date).isValid()
+    ) {
         return {
             message: "Error: entered date invalid",
             timestamp: Date.now(),
@@ -211,12 +236,18 @@ export async function editExpense(
     // no check for notes
     editExpenseObj.notes = notes;
 
-    if (!isInConst(tag, EXPENSE_TAGS) && tag) {
+    // if (!arrayIsInConst(tags, EXPENSE_TAGS) && tags) {
+    //     return {
+    //         message: "Error: entered tags invalid",
+    //         timestamp: Date.now(),
+    //     };
+    // }
+    if (tags && !arrayIsInConst(tags.split(","), EXPENSE_TAGS)) {
         return { message: "Error: entered tag invalid", timestamp: Date.now() };
     }
-    editExpenseObj.tags = isInConst(tag, EXPENSE_TAGS) ? [tag] : null;
+    editExpenseObj.tags = tags?.split(",") ?? null;
 
-    console.log(Util.inspect(editExpenseObj, false, null, true));
+    // console.log(Util.inspect(editExpenseObj, false, null, true));
 
     try {
         await connectDB();
@@ -237,8 +268,9 @@ export async function editExpense(
     }
 }
 
+// Changed from actually deleting to toggling deleted expenses
 export async function deleteExpense(
-    prevState: { message: string | null },
+    prevState: { message: string | null; timestamp: null | number },
     formData: FormData
 ) {
     const userId = checkIfStringNull(String(formData.get("userId")));
@@ -259,17 +291,31 @@ export async function deleteExpense(
             throw new Error("invalid document");
         }
 
-        // console.log("DELETED=======");
-        // console.log(deletedExpense);
-        await deletedExpense.deleteOne();
+        // await deletedExpense.deleteOne();
+
+        deletedExpense.set("deleted", true);
+
+        await deletedExpense.save();
+
+        // const result = await Expense.findOneAndUpdate(
+        //     { _id: expenseId, userId },
+        //     { deleted: true },
+        //     { new: true, upsert: true }
+        // );
+
+        // console.log(result);
 
         revalidatePath("/finance");
 
         return {
-            message: `Successfully Deleted item: ${deletedExpense._id}\n${deletedExpense.name} - ${deletedExpense.cost}`,
+            message: `Successfully Deleted item`,
+            timestamp: Date.now(),
         };
     } catch (err) {
         printError("getExpenses", err as Error);
-        return { message: "Error: Something went wrong." };
+        return {
+            message: "Error: Something went wrong.",
+            timestamp: Date.now(),
+        };
     }
 }
