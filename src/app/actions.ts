@@ -5,7 +5,7 @@ import {
     arrayIsInConst,
     EXPENSE_TAGS,
     isInConst,
-    SUBSCRIPTION_INTERVAL,
+    INTERVAL,
 } from "./(db)/common";
 import Expense from "./(db)/models/expense.model";
 import { connectDB } from "./(db)/mongodb";
@@ -14,6 +14,7 @@ import { checkIfStringNull, isStringEmptyOrNullish } from "./(lib)/commons";
 import { printError } from "./(lib)/error-commons";
 import { revalidatePath } from "next/cache";
 import { FilterQuery } from "mongoose";
+import Income from "./(db)/models/income.model";
 
 export async function getExpenses({
     userId,
@@ -95,7 +96,7 @@ export async function addExpense(
         };
     newExpenseObj.name = name;
 
-    if (!isInConst(subscriptionInterval, SUBSCRIPTION_INTERVAL)) {
+    if (!isInConst(subscriptionInterval, INTERVAL)) {
         if (subscriptionInterval && subscriptionInterval !== "unset") {
             return {
                 message: "Error: entered subscriptionInterval invalid",
@@ -105,7 +106,7 @@ export async function addExpense(
     }
     newExpenseObj.subscriptionInterval = isInConst(
         subscriptionInterval,
-        SUBSCRIPTION_INTERVAL
+        INTERVAL
     )
         ? subscriptionInterval
         : null;
@@ -193,7 +194,7 @@ export async function editExpense(
         };
     editExpenseObj.name = name;
 
-    if (!isInConst(subscriptionInterval, SUBSCRIPTION_INTERVAL)) {
+    if (!isInConst(subscriptionInterval, INTERVAL)) {
         if (subscriptionInterval && subscriptionInterval !== "unset") {
             return {
                 message: "Error: entered subscriptionInterval invalid",
@@ -203,7 +204,7 @@ export async function editExpense(
     }
     editExpenseObj.subscriptionInterval = isInConst(
         subscriptionInterval,
-        SUBSCRIPTION_INTERVAL
+        INTERVAL
     )
         ? subscriptionInterval
         : null;
@@ -313,6 +314,133 @@ export async function deleteExpense(
         };
     } catch (err) {
         printError("getExpenses", err as Error);
+        return {
+            message: "Error: Something went wrong.",
+            timestamp: Date.now(),
+        };
+    }
+}
+
+/**
+ *
+ *
+ *
+ * END OF EXPENSES
+ *
+ *
+ *
+ */
+
+export async function getIncome({
+    userId,
+    from,
+    to,
+}: {
+    userId: string;
+    from?: string;
+    to?: string;
+}) {
+    try {
+        if (from) {
+            if (isStringEmptyOrNullish(to)) {
+                throw new Error("filters from and to must be exclusively set");
+            }
+        }
+        if (to) {
+            if (isStringEmptyOrNullish(from)) {
+                throw new Error("filters from and to must be exclusively set");
+            }
+        }
+        await connectDB();
+        const query = {
+            $or: [
+                {
+                    deleted: false,
+                },
+                {
+                    deleted: undefined,
+                },
+            ],
+            $and: [{ userId }],
+        } as FilterQuery<{
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            [key: string]: any;
+        }>;
+
+        if (from) {
+            query.date = { $gte: from, $lt: to };
+        }
+
+        const income = await Income.find(query).lean();
+        return JSON.stringify(income);
+    } catch (err) {
+        printError("getIncome", err as Error);
+        throw err;
+    }
+}
+
+export async function addIncome(
+    prevState: { message: string | null; timestamp: null | number },
+    formData: FormData
+) {
+    const amount = Number(formData.get("amount"));
+    const name = checkIfStringNull(String(formData.get("name")));
+    const payInterval = checkIfStringNull(String(formData.get("pay-interval")));
+    const userId = checkIfStringNull(String(formData.get("userId")));
+    const notes = checkIfStringNull(String(formData.get("notes")));
+
+    const newIncomeObj: {
+        [key: string]: string | number | string[] | boolean | null;
+    } = {};
+
+    if (!amount || isNaN(amount) || amount < 1)
+        return {
+            message: "Error: entered amount invalid",
+            timestamp: Date.now(),
+        };
+    newIncomeObj.amount = amount;
+
+    if (!name || name.trim() === "")
+        return {
+            message: "Error: entered name invalid",
+            timestamp: Date.now(),
+        };
+    newIncomeObj.name = name;
+
+    if (!isInConst(payInterval, INTERVAL)) {
+        if (payInterval && payInterval !== "unset") {
+            return {
+                message: "Error: entered payInterval invalid",
+                timestamp: Date.now(),
+            };
+        }
+    }
+    newIncomeObj.payInterval = isInConst(payInterval, INTERVAL)
+        ? payInterval
+        : null;
+
+    if (!userId || userId.trim() === "") {
+        return {
+            message: "Error: something went wrong",
+            timestamp: Date.now(),
+        };
+    }
+    newIncomeObj.userId = userId;
+
+    newIncomeObj.notes = notes;
+
+    console.log(Util.inspect(newIncomeObj, false, null, true));
+
+    try {
+        await connectDB();
+
+        const newIncome = new Income(newIncomeObj);
+        await newIncome.save();
+
+        revalidatePath("/finance");
+        return { message: `Success: Income added!`, timestamp: Date.now() };
+    } catch (err) {
+        printError("addIncome", err as Error);
         return {
             message: "Error: Something went wrong.",
             timestamp: Date.now(),

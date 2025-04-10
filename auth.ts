@@ -13,9 +13,10 @@ const config = {
         }),
     ],
     callbacks: {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async session({ session, token, user }) {
             if (token) {
-                session.user.id = token.google_id;
+                session.user.id = token.google_id as string;
             }
             session.accessToken = token.accessToken;
             return session;

@@ -4,6 +4,13 @@ import "./globals.css";
 import Sidebar from "./(components)/Sidebar";
 import SessionWrapper from "./(components)/SessionWrapper";
 import { ToastContainer } from "react-toastify";
+import dayjs from "dayjs";
+import DayJSUtc from 'dayjs/plugin/utc'
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(DayJSUtc)
+dayjs.extend(timezone);
+
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

@@ -1,13 +1,13 @@
 import mongoose, { Schema } from "mongoose";
-import { requiredString, SUBSCRIPTION_INTERVAL } from "../common";
+import { requiredString, INTERVAL } from "../common";
 
-// type subscriptionIntervalType = (typeof SUBSCRIPTION_INTERVAL)[number];
+// type subscriptionIntervalType = (typeof INTERVAL)[number];
 
 interface ExpenseDoc extends mongoose.Document {
     cost: number;
     name: string;
     userId: string;
-    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
+    subscriptionInterval?: (typeof INTERVAL)[number];
     date?: Date;
     tags?: string[];
     notes?: string;
@@ -24,7 +24,7 @@ const expenseSchema = new Schema(
         userId: requiredString,
         subscriptionInterval: {
             type: String,
-            enum: [...SUBSCRIPTION_INTERVAL.values()],
+            enum: [...INTERVAL.values()],
         },
         date: {
             type: Date,

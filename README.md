@@ -2,6 +2,11 @@
 
 My personal workout and finance tracker
 
+## Commands
+`docker-compose up` to run db
+    - note: client app will be dockerized with compose soon
+`docker run -it --expose 3000 -p 3000:3000 --env-file .env -v .:/app kliffordagujar/integrated-tracker` to run in seperate container
+
 ## TODO
 
 -   Base Workout Route

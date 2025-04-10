@@ -1,68 +1,58 @@
 "use client";
-import { EXPENSE_TAGS, SUBSCRIPTION_INTERVAL } from "@/app/(db)/common";
-import { editExpense } from "@/app/actions";
-import { motion } from "motion/react";
+import { EXPENSE_TAGS, INTERVAL } from "@/app/(db)/common";
+import { formatDateWithTimezoneISOString } from "@/app/(lib)/date-commons";
+import { addExpense } from "@/app/actions";
+import dayjs from "dayjs";
 import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import Select from "react-select";
 // import { FaXmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
-import Select from "react-select";
 
 const initialState = {
     message: null as null | string,
-    timestamp: null as number | null,
+    timestamp: null as null | number,
 };
 
 const SubmitButton = () => {
     const { pending } = useFormStatus();
     return (
         <button
-            className="p-2 bg-[color:--color-s-2] text-[color:--color-neutral]"
+            className="p-2 bg-[color:--color-s-2] text-[color:--color-neutral] my-2"
             type="submit"
             aria-disabled={pending}
         >
-            Edit Expense
+            Add Expense
         </button>
     );
 };
 
-function EditExpenses({
-    expense,
-    removeSelectedExpense,
+function AddExpensesForm({
+    userId,
+    toggleShowState,
 }: {
-    expense: LeanExpenseWithId | null;
-    removeSelectedExpense: () => void;
+    userId: string;
+    toggleShowState: () => void;
 }) {
-    const [state, editExpenseAction] = useActionState(
-        editExpense,
-        initialState
-    );
+    const [state, addExpenseAction] = useActionState(addExpense, initialState);
+
+    const { message } = state;
 
     useEffect(() => {
-        const { message } = state;
         if (message?.includes("Success")) {
             toast.success(message);
-            removeSelectedExpense();
+            toggleShowState();
         }
         if (message?.includes("Error")) toast.error(message);
-    }, [state, removeSelectedExpense]);
-
-    if (!expense) {
-        return <></>;
-    }
-
-    const { cost, name, userId, subscriptionInterval, date, tags, notes, _id } =
-        expense;
+    }, [message, toggleShowState]);
 
     return (
-        <motion.form
-            action={editExpenseAction}
-            id="edit-expense-form"
-            className="p-2 max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2]"
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+        <form
+            action={addExpenseAction}
+            id="add-expense-form"
+            className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2] my-4"
         >
+            <h2 className="mt-1">Add Expense</h2>
             <div className="flex flex-col">
                 <label htmlFor="cost" className="capitalize">
                     cost:
@@ -73,7 +63,6 @@ function EditExpenses({
                     placeholder="Enter cost value"
                     type="number"
                     className=""
-                    defaultValue={cost}
                     required
                 />
             </div>
@@ -85,27 +74,20 @@ function EditExpenses({
                     name="name"
                     id="name"
                     placeholder="Enter expense name"
-                    defaultValue={name}
                     className=""
                     required
                 />
             </div>
-            <input
-                name="userId"
-                id="userId"
-                defaultValue={userId}
-                className=""
-                required
-                hidden
-            />
-            <input
-                name="expenseId"
-                id="expenseId"
-                defaultValue={_id}
-                className=""
-                required
-                hidden
-            />
+            <div className="flex flex-col">
+                <input
+                    name="userId"
+                    id="userId"
+                    defaultValue={userId}
+                    className=""
+                    required
+                    hidden
+                />
+            </div>
             <div className="flex flex-col">
                 <label htmlFor="date" className="capitalize">
                     date:
@@ -116,12 +98,8 @@ function EditExpenses({
                     placeholder="Enter date"
                     type="date"
                     className=""
-                    defaultValue={
-                        new Date(date ? date : new Date())
-                            .toISOString()
-                            .split("T")[0]
-                    }
-                    max={new Date().toISOString().split("T")[0]}
+                    defaultValue={dayjs(new Date()).format("YYYY-MM-DD")}
+                    max={dayjs(new Date()).format("YYYY-MM-DD")}
                 />
             </div>
             <div className="flex flex-col">
@@ -134,10 +112,9 @@ function EditExpenses({
                         placeholder="Select Subscription Interval"
                         aria-label="Subscription Interval selector"
                         instanceId="add-expense-Subscription-Interval"
-                        defaultInputValue={subscriptionInterval ?? ""}
                         options={[
                             { value: "unset", label: "unset" },
-                            ...[...SUBSCRIPTION_INTERVAL].map((val) => ({
+                            ...[...INTERVAL].map((val) => ({
                                 value: val,
                                 label: val,
                             })),
@@ -153,10 +130,6 @@ function EditExpenses({
                 <div className="flex flex-wrap">
                     <Select
                         className="flex-1 text-black"
-                        defaultValue={tags?.map((tag) => ({
-                            value: tag,
-                            label: tag,
-                        }))}
                         options={[...EXPENSE_TAGS].map((val) => ({
                             value: val,
                             label: val,
@@ -179,18 +152,16 @@ function EditExpenses({
                     id="notes"
                     placeholder="Enter notes"
                     className=""
-                    key="editExpenseNotes"
-                    defaultValue={notes}
                 />
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex gap-2 mb-2">
                 <SubmitButton />
-                <button type="button" onClick={() => removeSelectedExpense()}>
+                <button type="button" onClick={() => toggleShowState()}>
                     Cancel
                 </button>
             </div>
-        </motion.form>
+        </form>
     );
 }
 
-export default EditExpenses;
+export default AddExpensesForm;

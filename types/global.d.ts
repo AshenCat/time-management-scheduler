@@ -30,7 +30,7 @@ interface ExpenseAttrs {
     cost: number;
     name: string;
     userId: string;
-    subscriptionInterval?: (typeof SUBSCRIPTION_INTERVAL)[number];
+    subscriptionInterval?: (typeof INTERVAL)[number];
     date?: Date;
     tags?: string[];
     notes?: string;
@@ -38,6 +38,21 @@ interface ExpenseAttrs {
 }
 
 interface LeanExpenseWithId extends ExpenseAttrs {
+    _id: string;
+    __v?: number;
+}
+
+interface IncomeAttrs {
+    amount: number;
+    name: string;
+    userId: string;
+    payInterval?: (typeof INTERVAL)[number];
+    deductions: { amount: number; notes: string }[];
+    notes?: string;
+    deleted?: boolean;
+}
+
+interface LeanIncomeWithId extends IncomeAttrs {
     _id: string;
     __v?: number;
 }

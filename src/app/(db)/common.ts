@@ -3,7 +3,7 @@ export const requiredString = {
     required: true,
 };
 
-export const SUBSCRIPTION_INTERVAL = [
+export const INTERVAL = [
     "weekly",
     "bi-weekly",
     "monthly",
@@ -23,6 +23,7 @@ export const EXPENSE_TAGS = [
     "grocery",
     "charity",
     "investment",
+    "liquid"
 ] as const;
 
 // use when checking if val is in const array
