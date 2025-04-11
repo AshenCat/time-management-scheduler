@@ -3,9 +3,7 @@
 My personal workout and finance tracker
 
 ## Commands
-`docker-compose up` to run db
-    - note: client app will be dockerized with compose soon
-`docker run -it --expose 3000 -p 3000:3000 --env-file .env -v .:/app kliffordagujar/integrated-tracker` to run in seperate container
+`docker-compose up` to run dev server and db
 
 ## TODO
 
@@ -25,10 +23,10 @@ My personal workout and finance tracker
     -   [ ] countdown timer hook
     -   [ ] workout transitions
 
--   [ ] Dockerize application
+-   [x] Dockerize application
 
     -   [x] spawn database service
-    -   [ ] dockerize client app
+    -   [x] dockerize client app
 
 -   Auth
 
@@ -59,12 +57,13 @@ My personal workout and finance tracker
 
 ### HIGH PRIORITY
 
--   [ ] Docker - next 15 currently has very little support while developing using docker. High priority but will have to wait for actual solution
+-   [x] Docker - ~~next 15 currently has very little support while developing using docker. High priority but will have to wait for actual solution~~
 
 ### MID PRIORITY
 
 -   [ ] finance - find a suitable way to make input take multiple values for selecting tags
 -   [ ] finance - add expense looks atrocious
+-   [ ] finance - accumulator for net income is not counting 1 time pay properly
 
 ### LOW PRIORITY
 

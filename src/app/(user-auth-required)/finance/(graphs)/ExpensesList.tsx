@@ -1,6 +1,6 @@
 "use client";
 import dayjs from "dayjs";
-import DayJSUtc from 'dayjs/plugin/utc'
+import DayJSUtc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import React, { useState } from "react";
 import DeleteExpenses from "../(mutations)/(expenses)/DeleteExpenses";
@@ -12,7 +12,7 @@ import { motion } from "motion/react";
 // import Select from "react-select/base";
 import AddIncome from "../(mutations)/(income)/AddIncome";
 
-dayjs.extend(DayJSUtc)
+dayjs.extend(DayJSUtc);
 dayjs.extend(timezone);
 
 function ExpensesTabList({
@@ -39,7 +39,7 @@ function ExpensesTabList({
                 // console.log("expense date");
                 // console.log(typeof dayjs(date));
                 // console.log(date);
-                const datejsDate = dayjs(date)?.tz('America/Toronto');
+                const datejsDate = dayjs(date)?.tz("America/Toronto");
                 return (
                     <motion.div
                         className="flex flex-col border-2"
@@ -61,8 +61,9 @@ function ExpensesTabList({
                                     {subscriptionInterval
                                         ? "" + subscriptionInterval
                                         : "(One-time) - " +
-                                        datejsDate ? datejsDate
-                                              .format("YYYY-MMM-DD") : "ERROR"}
+                                          (datejsDate
+                                              ? datejsDate.format("YYYY-MMM-DD")
+                                              : "ERROR")}
                                 </div>
                                 <div className="flex gap-2">
                                     {tags &&
