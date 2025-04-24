@@ -15,6 +15,8 @@ import { printError } from "./(lib)/error-commons";
 import { revalidatePath } from "next/cache";
 import { FilterQuery } from "mongoose";
 import Income from "./(db)/models/income.model";
+import Budget from "./(db)/models/budget.model";
+import { redirect } from "next/navigation";
 
 export async function getExpenses({
     userId,
@@ -147,7 +149,8 @@ export async function addExpense(
         const newExpense = new Expense(newExpenseObj);
         await newExpense.save();
 
-        revalidatePath("/finance");
+        // revalidatePath("/finance");
+        redirect('/finances/expenses')
         return { message: `Success: Expense added!`, timestamp: Date.now() };
     } catch (err) {
         printError("addExpense", err as Error);
@@ -321,7 +324,7 @@ export async function deleteExpense(
     }
 }
 
-/**
+/*********************************************************************************
  *
  *
  *
@@ -329,7 +332,7 @@ export async function deleteExpense(
  *
  *
  *
- */
+ *********************************************************************************/
 
 export async function getIncome({
     userId,
@@ -441,6 +444,98 @@ export async function addIncome(
         return { message: `Success: Income added!`, timestamp: Date.now() };
     } catch (err) {
         printError("addIncome", err as Error);
+        return {
+            message: "Error: Something went wrong.",
+            timestamp: Date.now(),
+        };
+    }
+}
+
+/*********************************************************************************
+ *
+ *
+ *
+ * END OF INCOME
+ *
+ *
+ *
+ *********************************************************************************/
+
+export async function getBudget({ userId }: { userId: string }) {
+    try {
+        await connectDB();
+
+        const budgetList = await Budget.find({ userId }).lean();
+
+        return JSON.stringify(budgetList);
+    } catch (err) {
+        printError("getExpenses", err as Error);
+        throw err;
+    }
+}
+
+export async function addBudget(
+    prevState: { message: string | null; timestamp: null | number },
+    formData: FormData
+) {
+    const amount = Number(formData.get("amount"));
+    const name = checkIfStringNull(String(formData.get("name")));
+    const budgetInterval = checkIfStringNull(String(formData.get("interval")));
+    const userId = checkIfStringNull(String(formData.get("userId")));
+    const notes = checkIfStringNull(String(formData.get("notes")));
+
+    const newBudgetObj: {
+        [key: string]: string | number | string[] | boolean | null;
+    } = {};
+
+    if (!amount || isNaN(amount) || amount < 1)
+        return {
+            message: "Error: entered amount invalid",
+            timestamp: Date.now(),
+        };
+    newBudgetObj.amount = amount;
+
+    if (!name || name.trim() === "")
+        return {
+            message: "Error: entered name invalid",
+            timestamp: Date.now(),
+        };
+    newBudgetObj.name = name;
+
+    if (!isInConst(budgetInterval, INTERVAL)) {
+        if (budgetInterval && budgetInterval !== "unset") {
+            return {
+                message: "Error: entered budgetInterval invalid",
+                timestamp: Date.now(),
+            };
+        }
+    }
+    newBudgetObj.budgetInterval = isInConst(budgetInterval, INTERVAL)
+        ? budgetInterval
+        : null;
+
+    if (!userId || userId.trim() === "") {
+        return {
+            message: "Error: something went wrong",
+            timestamp: Date.now(),
+        };
+    }
+    newBudgetObj.userId = userId;
+
+    newBudgetObj.notes = notes;
+
+    console.log(Util.inspect(newBudgetObj, false, null, true));
+
+    try {
+        await connectDB();
+
+        const newBudget = new Budget(newBudgetObj);
+        await newBudget.save();
+
+        revalidatePath("/finance");
+        return { message: `Success: Budget added!`, timestamp: Date.now() };
+    } catch (err) {
+        printError("addBudget", err as Error);
         return {
             message: "Error: Something went wrong.",
             timestamp: Date.now(),

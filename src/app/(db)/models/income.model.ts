@@ -6,7 +6,7 @@ interface IncomeDoc extends mongoose.Document {
     name: string;
     userId: string;
     payInterval?: (typeof INTERVAL)[number];
-    deductions?: [];
+    // deductions?: [];
     notes?: string;
     deleted?: boolean;
 }
@@ -23,15 +23,15 @@ const incomeSchema = new Schema(
             type: String,
             enum: [...INTERVAL.values()],
         },
-        deductions: [
-            {
-                amount: {
-                    type: Number,
-                    required: true,
-                },
-                notes: String,
-            },
-        ],
+        // deductions: [
+        //     {
+        //         amount: {
+        //             type: Number,
+        //             required: true,
+        //         },
+        //         notes: String,
+        //     },
+        // ],
         notes: String,
         deleted: { type: Boolean, default: false },
     },

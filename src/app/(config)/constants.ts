@@ -1,4 +1,4 @@
-const errorIfVariableDoesNotExist = (envVarName: string) => {
+const errorIfENVDoesNotExist = (envVarName: string) => {
     if (
         !process.env[envVarName] ||
         process.env[envVarName] === ""
@@ -8,5 +8,7 @@ const errorIfVariableDoesNotExist = (envVarName: string) => {
     return process.env[envVarName];
 };
 
-export const GOOGLE_OAUTH_CLIENT_ID = errorIfVariableDoesNotExist("GOOGLE_OAUTH_CLIENT_ID");
-export const GOOGLE_OAUTH_CLIENT_SECRET = errorIfVariableDoesNotExist("GOOGLE_OAUTH_CLIENT_SECRET");
+export const GOOGLE_OAUTH_CLIENT_ID = errorIfENVDoesNotExist("GOOGLE_OAUTH_CLIENT_ID");
+export const GOOGLE_OAUTH_CLIENT_SECRET = errorIfENVDoesNotExist("GOOGLE_OAUTH_CLIENT_SECRET");
+export const MONGODB_URI = errorIfENVDoesNotExist("MONGODB_URI");
+export const NODE_ENV = errorIfENVDoesNotExist("NODE_ENV");

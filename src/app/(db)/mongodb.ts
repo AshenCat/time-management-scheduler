@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
-const { MONGODB_URI } = process.env;
+import { MONGODB_URI } from "../(config)/constants";
+
 export const connectDB = async () => {
     try {
-        console.log("MONGODB: connecting to ")
-        console.log(MONGODB_URI)
+        console.log("MONGODB: connecting to ");
+        console.log(MONGODB_URI);
         const { connection } = await mongoose.connect(MONGODB_URI as string);
         if (connection.readyState === 1) {
             return Promise.resolve(true);

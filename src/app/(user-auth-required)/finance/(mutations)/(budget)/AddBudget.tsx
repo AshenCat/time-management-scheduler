@@ -1,13 +1,10 @@
 "use client";
-import { EXPENSE_TAGS, INTERVAL } from "@/app/(db)/common";
-import { formatDateWithTimezoneISOString } from "@/app/(lib)/date-commons";
-import { addExpense } from "@/app/actions";
-import dayjs from "dayjs";
+import { addBudget } from "@/app/actions";
 import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import Select from "react-select";
-// import { FaXmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { INTERVAL } from "@/app/(db)/common";
 
 const initialState = {
     message: null as null | string,
@@ -22,19 +19,19 @@ const SubmitButton = () => {
             type="submit"
             aria-disabled={pending}
         >
-            Add Expense
+            Add Budget
         </button>
     );
 };
 
-function AddExpensesForm({
+function AddBudget({
     userId,
     toggleShowState,
 }: {
     userId: string;
     toggleShowState: () => void;
 }) {
-    const [state, addExpenseAction] = useActionState(addExpense, initialState);
+    const [state, addBudgetAction] = useActionState(addBudget, initialState);
 
     const { message } = state;
 
@@ -48,19 +45,19 @@ function AddExpensesForm({
 
     return (
         <form
-            action={addExpenseAction}
-            id="add-expense-form"
+            action={addBudgetAction}
+            id="add-budget-form"
             className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2] my-4"
         >
-            <h2 className="mt-1">Add Expense</h2>
+            <h2 className="mt-1">Add Budget</h2>
             <div className="flex flex-col">
-                <label htmlFor="cost" className="capitalize">
-                    cost:
+                <label htmlFor="amount" className="capitalize">
+                    amount:
                 </label>
                 <input
-                    name="cost"
-                    id="cost"
-                    placeholder="Enter cost value"
+                    name="amount"
+                    id="amount"
+                    placeholder="Enter amount value"
                     type="number"
                     className=""
                     required
@@ -73,7 +70,7 @@ function AddExpensesForm({
                 <input
                     name="name"
                     id="name"
-                    placeholder="Enter expense name"
+                    placeholder="Enter budget name"
                     className=""
                     required
                 />
@@ -89,29 +86,15 @@ function AddExpensesForm({
                 />
             </div>
             <div className="flex flex-col">
-                <label htmlFor="date" className="capitalize">
-                    date:
-                </label>
-                <input
-                    name="date"
-                    id="date"
-                    placeholder="Enter date"
-                    type="date"
-                    className=""
-                    defaultValue={dayjs(new Date()).format("YYYY-MM-DD")}
-                    max={dayjs(new Date()).format("YYYY-MM-DD")}
-                />
-            </div>
-            <div className="flex flex-col">
                 <div>
-                    <span className="capitalize">subscription interval:</span>
+                    <span className="capitalize">interval:</span>
                 </div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap cursor-not-allowed">
                     <Select
                         className="flex-1 text-black"
-                        placeholder="Select Subscription Interval"
-                        aria-label="Subscription Interval selector"
-                        instanceId="add-expense-Subscription-Interval"
+                        placeholder="Select Pay Interval"
+                        aria-label="Pay Interval selector"
+                        instanceId="add-budget-pay-Interval"
                         options={[
                             { value: "unset", label: "unset" },
                             ...[...INTERVAL].map((val) => ({
@@ -119,27 +102,9 @@ function AddExpensesForm({
                                 label: val,
                             })),
                         ]}
-                        name="subscription-interval"
-                    />
-                </div>
-            </div>
-            <div>
-                <div>
-                    <span className="capitalize">tags:</span>
-                </div>
-                <div className="flex flex-wrap">
-                    <Select
-                        className="flex-1 text-black"
-                        options={[...EXPENSE_TAGS].map((val) => ({
-                            value: val,
-                            label: val,
-                        }))}
-                        placeholder="Select tags"
-                        aria-label="tag selector"
-                        instanceId="add-expense-tag"
-                        name="tags"
-                        isMulti
-                        delimiter=","
+                        defaultValue={{value: 'monthly', label: 'monthly'}}
+                        name="budget-interval"
+                        isDisabled
                     />
                 </div>
             </div>
@@ -164,4 +129,4 @@ function AddExpensesForm({
     );
 }
 
-export default AddExpensesForm;
+export default AddBudget;

@@ -2,10 +2,22 @@
 
 My personal workout and finance tracker
 
+## Developing
+
+-   when installing new packages, you need to rebuild the docker image again: `docker build -t IMAGE_NAME .`
+
 ## Commands
-`docker-compose up` to run dev server and db
+
+`docker compose up --watch` to run dev server and db. Make sure the 'watch' flag is enabled.
 
 ## TODO
+
+-   `finance/expenses/{id}`
+-   `finance/income/add`
+-   `finance/income/{id}`
+-   `finance/budget/add`
+-   `finance/budget/{id}`
+-   (ongoing on the side)full refactor `finance/(graphs)/ExpensesList.tsx`
 
 -   Base Workout Route
     -   [x] Base Workout view
@@ -49,8 +61,10 @@ My personal workout and finance tracker
                             -   [ ] by date
             -   [x] Update
             -   [x] Delete
+                -   [ ] Archive
         -   [ ] expenses graph
         -   [ ] income graph
+        -   [ ] budget graph
         -   [ ] investment graph
 
 ## Bugs:

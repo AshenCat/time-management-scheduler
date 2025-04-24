@@ -9,6 +9,7 @@ interface ExpenseDoc extends mongoose.Document {
     userId: string;
     subscriptionInterval?: (typeof INTERVAL)[number];
     date?: Date;
+    allocation?: mongoose.Types.ObjectId;
     tags?: string[];
     notes?: string;
     deleted?: boolean;
@@ -28,6 +29,10 @@ const expenseSchema = new Schema(
         },
         date: {
             type: Date,
+        },
+        allocation: {
+            type: Schema.Types.ObjectId,
+            ref: 'Budget'
         },
         tags: [String],
         notes: String,

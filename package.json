@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nivo/pie": "^0.89.1",
     "@tauri-apps/api": "^2.2.0",
     "dayjs": "^1.11.13",
     "mongoose": "^8.12.2",

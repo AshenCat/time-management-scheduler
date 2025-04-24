@@ -3,14 +3,15 @@ import dayjs from "dayjs";
 import DayJSUtc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import React, { useState } from "react";
-import DeleteExpenses from "../(mutations)/(expenses)/DeleteExpenses";
-import AddExpensesForm from "../(mutations)/(expenses)/AddExpenses";
-import EditExpenses from "../(mutations)/(expenses)/EditExpenses";
+import DeleteExpenses from "../expenses/DeleteExpenses";
+// import AddExpensesForm from "../expenses/add-new/AddExpenses";
+import EditExpenses from "../expenses/EditExpenses";
 import { AnimatePresence } from "motion/react";
 import { EXPENSE_TAG_COLOR_MAP } from "@/app/(lib)/client-commons";
 import { motion } from "motion/react";
 // import Select from "react-select/base";
 import AddIncome from "../(mutations)/(income)/AddIncome";
+import AddBudget from "../(mutations)/(budget)/AddBudget";
 
 dayjs.extend(DayJSUtc);
 dayjs.extend(timezone);
@@ -130,7 +131,6 @@ function ExpensesTabList({
 
 function IncomeTabList({
     allIncome,
-    userId,
 }: {
     allIncome: LeanIncomeWithId[];
     userId: string;
@@ -204,153 +204,109 @@ function ExpensesList({
 }: {
     expenses: LeanExpenseWithId[];
     income: LeanIncomeWithId[];
+    budgets: LeanBudgetWithId[];
     userId: string;
 }) {
-    const recurringExpensesTotal = expenses
-        .filter((expense) => expense.subscriptionInterval)
-        .reduce<number | null>((prev, expense) => {
-            if (prev !== 0 && !prev) return null;
-            if (expense.tags?.includes("liquid")) return prev;
-            if (expense.subscriptionInterval === "weekly") {
-                return (prev += expense.cost * 4);
-            }
-            if (expense.subscriptionInterval === "bi-weekly") {
-                return (prev += expense.cost * 2);
-            }
-            if (expense.subscriptionInterval === "monthly") {
-                return (prev += expense.cost);
-            }
-            if (expense.subscriptionInterval === "quarterly") {
-                return (prev += expense.cost / 3);
-            }
-            if (expense.subscriptionInterval === "bi-yearly") {
-                return (prev += expense.cost / 6);
-            }
-            if (expense.subscriptionInterval === "yearly") {
-                return (prev += expense.cost / 12);
-            }
-            return null;
-        }, 0)
-        ?.toFixed(2);
-
-    const nonRecurringExpenses = expenses
-        .filter((expense) => !expense.subscriptionInterval)
-        .reduce<number>((prev, expense) => (prev += expense.cost), 0);
-
-    const liquidExpenses = expenses
-        .filter((expense) => expense.tags?.includes("liquid"))
-        .reduce<number>((prev, expense) => (prev += expense.cost), 0);
-
-    const expensesTotal =
-        Number(recurringExpensesTotal) + liquidExpenses + nonRecurringExpenses;
-
-    const recurringIncome = income.reduce<number | null>((prev, inc) => {
-        if (prev !== 0 && !prev) return null;
-        if (inc.payInterval === "weekly") {
-            return (prev += inc.amount * 4);
-        }
-        if (inc.payInterval === "bi-weekly") {
-            return (prev += inc.amount * 2);
-        }
-        if (inc.payInterval === "monthly") {
-            return (prev += inc.amount);
-        }
-        if (inc.payInterval === "quarterly") {
-            return (prev += inc.amount / 3);
-        }
-        if (inc.payInterval === "bi-yearly") {
-            return (prev += inc.amount / 6);
-        }
-        if (inc.payInterval === "yearly") {
-            return (prev += inc.amount / 12);
-        }
-        return null;
-    }, 0);
-
-    const net = Number(recurringIncome) - expensesTotal;
-
-    const [addExpenseState, setAddExpenseState] = useState(false);
+    const [_addExpenseState, setAddExpenseState] = useState(false);
     const [addIncomeState, setAddIncomeState] = useState(false);
+    const [addBudgetState, setAddBudgetState] = useState(false);
     const [selectedTabList, setSelectedTabList] = useState("expenses");
+
+    const toggleStates = (state: string) => {
+        switch (state) {
+            case "expense":
+                setAddExpenseState(true);
+                setAddIncomeState(false);
+                setAddBudgetState(false);
+                break;
+            case "income":
+                setAddExpenseState(false);
+                setAddIncomeState(true);
+                setAddBudgetState(false);
+                break;
+            case "budget":
+                setAddExpenseState(false);
+                setAddIncomeState(false);
+                setAddBudgetState(true);
+                break;
+            default:
+                setAddExpenseState(false);
+                setAddIncomeState(false);
+                setAddBudgetState(false);
+        }
+    };
 
     return (
         <div className="">
-            <h1>Expenses Overview: </h1>
-            <div>
-                ${recurringExpensesTotal}/month + ${liquidExpenses} liquid
-                /month + ${nonRecurringExpenses} single payments = $
-                {expensesTotal} total for the month of{" "}
-                {dayjs(new Date()).format("MMMM")}
-            </div>
-            <h1>Income Overview: </h1>
-            <div>${recurringIncome}/month</div>
-            <div className="p-2 bg-white text-black">
-                You are{" "}
-                <span
-                    className={`underline ${
-                        net > 0 ? "text-green-400" : "text-red-400"
-                    }`}
-                >
-                    ${net.toFixed(2)} (min)
-                </span>{" "}
-                or{" "}
-                <span
-                    className={`underline ${
-                        net > 0 ? "text-green-400" : "text-red-400"
-                    }`}
-                >
-                    ${net + liquidExpenses} (max)
-                </span>{" "}
-                {net > 0 ? "positive" : "negative"} / month
-            </div>
-            <hr />
             <div className="flex gap-2 my-4">
-                <button
-                    type="button"
-                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-2 px-4"
-                    onClick={() => setAddExpenseState((prev) => !prev)}
-                    disabled={addExpenseState}
-                >
-                    New Expense
-                </button>
-                <button
-                    type="button"
-                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-2 px-4"
-                    onClick={() => setAddIncomeState((prev) => !prev)}
-                    disabled={addIncomeState}
-                >
-                    New Income
-                </button>
+                
+                
             </div>
             <hr />
-            <AnimatePresence>
-                {addExpenseState && (
+            <AnimatePresence mode="popLayout">
+                {/* {addExpenseState && (
                     <motion.div
                         key="add-expense-form-container"
                         exit={{ opacity: 0 }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{
+                            opacity: 1,
+                            x: 0,
+                            transition: {
+                                delay: 0.2,
+                                type: "spring",
+                                visualDuration: 0.3,
+                                bounce: 0.4,
+                            },
+                        }}
                     >
                         <AddExpensesForm
                             userId={userId}
-                            toggleShowState={() =>
-                                setAddExpenseState((prev) => !prev)
-                            }
+                            toggleShowState={() => toggleStates("")}
                         />
                     </motion.div>
-                )}
+                )} */}
                 {addIncomeState && (
                     <motion.div
                         key="add-income-form-container"
                         exit={{ opacity: 0 }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{
+                            opacity: 1,
+                            x: 0,
+                            transition: {
+                                delay: 0.2,
+                                type: "spring",
+                                visualDuration: 0.3,
+                                bounce: 0.4,
+                            },
+                        }}
                     >
                         <AddIncome
                             userId={userId}
-                            toggleShowState={() =>
-                                setAddIncomeState((prev) => !prev)
-                            }
+                            toggleShowState={() => toggleStates("")}
+                        />
+                    </motion.div>
+                )}
+                {addBudgetState && (
+                    <motion.div
+                        key="add-budget-form-container"
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{
+                            opacity: 1,
+                            x: 0,
+                            transition: {
+                                delay: 0.2,
+                                type: "spring",
+                                visualDuration: 0.3,
+                                bounce: 0.4,
+                            },
+                        }}
+                    >
+                        <AddBudget
+                            userId={userId}
+                            toggleShowState={() => toggleStates("")}
                         />
                     </motion.div>
                 )}
