@@ -32,7 +32,7 @@ interface ExpenseAttrs {
     userId: string;
     subscriptionInterval?: (typeof INTERVAL)[number];
     date?: Date;
-    allocation?: string;
+    allocation?: LeanBudgetWithId;
     tags?: string[];
     notes?: string;
     deleted?: boolean;

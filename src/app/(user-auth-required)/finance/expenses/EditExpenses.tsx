@@ -29,9 +29,11 @@ const SubmitButton = () => {
 function EditExpenses({
     expense,
     removeSelectedExpense,
+    budgets,
 }: {
     expense: LeanExpenseWithId | null;
     removeSelectedExpense: () => void;
+    budgets: LeanBudgetWithId[];
 }) {
     const [state, editExpenseAction] = useActionState(
         editExpense,
@@ -123,6 +125,27 @@ function EditExpenses({
                     }
                     max={new Date().toISOString().split("T")[0]}
                 />
+            </div>
+            <div className="flex flex-col">
+                <div>
+                    <span className="capitalize">Budget allocation:</span>
+                </div>
+                <div className="flex flex-wrap">
+                    <Select
+                        className="flex-1 text-black"
+                        placeholder="Select Allocation"
+                        aria-label="allocation selector"
+                        instanceId="add-expense-allocation"
+                        options={[
+                            { value: "unset", label: "unset" },
+                            ...budgets.map((val) => ({
+                                value: val._id,
+                                label: val.name,
+                            })),
+                        ]}
+                        name="allocation"
+                    />
+                </div>
             </div>
             <div className="flex flex-col">
                 <div>

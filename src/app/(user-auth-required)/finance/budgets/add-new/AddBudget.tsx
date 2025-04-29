@@ -1,11 +1,11 @@
 "use client";
-import { INTERVAL } from "@/app/(db)/common";
-import { addIncome } from "@/app/actions";
+import { addBudget } from "@/app/actions";
 import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import Select from "react-select";
-// import { FaXmark } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { INTERVAL } from "@/app/(db)/common";
+import { useRouter } from "next/navigation";
 
 const initialState = {
     message: null as null | string,
@@ -20,37 +20,35 @@ const SubmitButton = () => {
             type="submit"
             aria-disabled={pending}
         >
-            Add Income
+            Add Budget
         </button>
     );
 };
 
-function AddIncome({
+function AddBudget({
     userId,
-    toggleShowState,
 }: {
     userId: string;
-    toggleShowState: () => void;
 }) {
-    const [state, addIncomeAction] = useActionState(addIncome, initialState);
+    const [state, addBudgetAction] = useActionState(addBudget, initialState);
+    const router = useRouter();
 
     const { message } = state;
 
     useEffect(() => {
         if (message?.includes("Success")) {
             toast.success(message);
-            toggleShowState();
         }
         if (message?.includes("Error")) toast.error(message);
-    }, [message, toggleShowState]);
+    }, [message]);
 
     return (
         <form
-            action={addIncomeAction}
-            id="add-income-form"
+            action={addBudgetAction}
+            id="add-budget-form"
             className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2] my-4"
         >
-            <h2 className="mt-1">Add Income</h2>
+            <h2 className="mt-1">Add Budget</h2>
             <div className="flex flex-col">
                 <label htmlFor="amount" className="capitalize">
                     amount:
@@ -71,7 +69,7 @@ function AddIncome({
                 <input
                     name="name"
                     id="name"
-                    placeholder="Enter income name"
+                    placeholder="Enter budget name"
                     className=""
                     required
                 />
@@ -88,14 +86,14 @@ function AddIncome({
             </div>
             <div className="flex flex-col">
                 <div>
-                    <span className="capitalize">pay interval:</span>
+                    <span className="capitalize">interval:</span>
                 </div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap cursor-not-allowed">
                     <Select
                         className="flex-1 text-black"
                         placeholder="Select Pay Interval"
                         aria-label="Pay Interval selector"
-                        instanceId="add-income-pay-Interval"
+                        instanceId="add-budget-pay-Interval"
                         options={[
                             { value: "unset", label: "unset" },
                             ...[...INTERVAL].map((val) => ({
@@ -103,7 +101,9 @@ function AddIncome({
                                 label: val,
                             })),
                         ]}
-                        name="pay-interval"
+                        defaultValue={{value: 'monthly', label: 'monthly'}}
+                        name="budget-interval"
+                        isDisabled
                     />
                 </div>
             </div>
@@ -120,7 +120,7 @@ function AddIncome({
             </div>
             <div className="flex gap-2 mb-2">
                 <SubmitButton />
-                <button type="button" onClick={() => toggleShowState()}>
+                <button type="button" onClick={() => router.back()}>
                     Cancel
                 </button>
             </div>
@@ -128,4 +128,4 @@ function AddIncome({
     );
 }
 
-export default AddIncome;
+export default AddBudget;

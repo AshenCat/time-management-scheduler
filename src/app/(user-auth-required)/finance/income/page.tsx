@@ -41,7 +41,7 @@ async function page() {
                 </div>
                 <div className="mb-2">
                     <Link
-                        href="/finance/expenses/add-new"
+                        href="/finance/income/add-new"
                         className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
                     >
                         Add New Income

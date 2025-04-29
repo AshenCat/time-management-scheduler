@@ -13,53 +13,136 @@ import Util from "util";
 import { checkIfStringNull, isStringEmptyOrNullish } from "./(lib)/commons";
 import { printError } from "./(lib)/error-commons";
 import { revalidatePath } from "next/cache";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import Income from "./(db)/models/income.model";
 import Budget from "./(db)/models/budget.model";
 import { redirect } from "next/navigation";
+
+/*********************************************************************************
+ *
+ *
+ *
+ * START OF EXPENSES
+ *
+ *
+ *
+ *********************************************************************************/
 
 export async function getExpenses({
     userId,
     from,
     to,
+    sort,
+    searchKeyword,
+    deleted,
+    skip,
+    limit,
 }: {
     userId: string;
-    from?: string;
-    to?: string;
+    from?: Date;
+    to?: Date;
+    sort?: string;
+    searchKeyword?: string;
+    deleted?: "only" | "include" | undefined;
+    skip?: number;
+    limit?: number;
 }) {
     try {
-        if (from) {
-            if (isStringEmptyOrNullish(to)) {
-                throw new Error("filters from and to must be exclusively set");
-            }
-        }
-        if (to) {
-            if (isStringEmptyOrNullish(from)) {
-                throw new Error("filters from and to must be exclusively set");
-            }
-        }
-        await connectDB();
+        // if (from) {
+        //     if (isStringEmptyOrNullish(to)) {
+        //         throw new Error("filters from and to must be exclusively set");
+        //     }
+        // }
+        // if (to) {
+        //     if (isStringEmptyOrNullish(from)) {
+        //         throw new Error("filters from and to must be exclusively set");
+        //     }
+        // }
+
         const query = {
-            $or: [
-                {
-                    deleted: false,
-                },
-                {
-                    deleted: undefined,
-                },
-            ],
             $and: [{ userId }],
         } as FilterQuery<{
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             [key: string]: any;
         }>;
 
-        if (from) {
-            query.date = { $gte: from, $lt: to };
+        if (!deleted)
+            query.$and = [
+                ...(query.$and ?? []),
+                {
+                    $or: [
+                        {
+                            deleted: false,
+                        },
+                        {
+                            deleted: undefined,
+                        },
+                    ],
+                },
+            ];
+        else if (deleted === "only") {
+            query.deleted = true;
+        }
+        // if deleted === 'include', we just dont set it on the query itself
+        if (from) query.date = { ...{ $gte: from } };
+        if (to) query.date = { $lte: to, ...query.date };
+
+        const sortQuery = {} as {
+            [key: string]: 1 | -1;
+        };
+
+        // console.log("sort========");
+        // console.log(sort);
+
+        if (sort && sort.trim() !== "") {
+            const sortEntry = sort.split(",");
+            if (sortEntry.length > 1) {
+                sortQuery[sortEntry[0]] = Number(sortEntry[1]) as 1 | -1;
+            }
+            // console.log("sortQuery");
+            // console.log(sortQuery);
         }
 
-        const expenses = await Expense.find(query).lean();
-        return JSON.stringify(expenses);
+        // KEYWORD SEARCH
+        // console.log("KEYWORD");
+        // console.log(searchKeyword);
+        if (searchKeyword && searchKeyword.trim() !== "") {
+            const schemaFields = Object.keys(Expense.schema.paths);
+            const searchConditions = schemaFields
+                .map((field) => {
+                    if (Expense.schema.paths[field].instance === "String")
+                        return {
+                            [field]: { $regex: searchKeyword, $options: "i" },
+                        };
+                    return null;
+                })
+                .filter((v) => !!v);
+            query.$or = [...(query.$or ?? []), ...searchConditions];
+        }
+
+        // console.log(
+        //     "query====================================================================================================================="
+        // );
+        // console.log(query);
+
+        await connectDB();
+        const [expenses, count] = await Promise.all([
+            Expense.find(query)
+                .sort(sortQuery)
+                .skip((skip ?? 0) * (limit ?? 5))
+                .limit(limit ?? 5)
+                .populate("allocation")
+                .lean(),
+            Expense.countDocuments(query),
+        ]);
+
+        // console.log("count");
+        // console.log(count);
+        return {
+            expenses: JSON.stringify(expenses),
+            totalItems: count,
+            totalPages: Math.ceil(count / (limit ?? 5)),
+        };
     } catch (err) {
         printError("getExpenses", err as Error);
         throw err;
@@ -76,6 +159,7 @@ export async function addExpense(
         String(formData.get("subscription-interval"))
     );
     const userId = checkIfStringNull(String(formData.get("userId")));
+    const allocation = checkIfStringNull(String(formData.get("allocation")));
     const date = checkIfStringNull(String(formData.get("date")));
     const notes = checkIfStringNull(String(formData.get("notes")));
     const tags = checkIfStringNull(String(formData.get("tags")));
@@ -122,6 +206,21 @@ export async function addExpense(
     newExpenseObj.userId = userId;
 
     if (
+        allocation &&
+        allocation.trim() !== "" &&
+        allocation !== "unset" &&
+        !Types.ObjectId.isValid(allocation)
+    ) {
+        return {
+            message: "Error: something went invalid allocation",
+            timestamp: Date.now(),
+        };
+    }
+    if (allocation !== "unset") {
+        newExpenseObj.allocation = allocation;
+    }
+
+    if (
         !subscriptionInterval &&
         subscriptionInterval === "unset" &&
         !dayjs(date).isValid()
@@ -150,8 +249,7 @@ export async function addExpense(
         await newExpense.save();
 
         // revalidatePath("/finance");
-        redirect('/finances/expenses')
-        return { message: `Success: Expense added!`, timestamp: Date.now() };
+        // return { message: `Success: Expense added!`, timestamp: Date.now() };
     } catch (err) {
         printError("addExpense", err as Error);
         return {
@@ -159,6 +257,7 @@ export async function addExpense(
             timestamp: Date.now(),
         };
     }
+    redirect("/finances/expenses");
 }
 
 export async function editExpense(
@@ -171,6 +270,7 @@ export async function editExpense(
         String(formData.get("subscription-interval"))
     );
     const userId = checkIfStringNull(String(formData.get("userId")));
+    const allocation = checkIfStringNull(String(formData.get("allocation")));
     const expenseId = checkIfStringNull(String(formData.get("expenseId")));
     const date = checkIfStringNull(String(formData.get("date")));
     const notes = checkIfStringNull(String(formData.get("notes")));
@@ -205,6 +305,7 @@ export async function editExpense(
             };
         }
     }
+
     editExpenseObj.subscriptionInterval = isInConst(
         subscriptionInterval,
         INTERVAL
@@ -224,6 +325,21 @@ export async function editExpense(
             message: "Error: something went wrong",
             timestamp: Date.now(),
         };
+    }
+
+    if (
+        allocation &&
+        allocation.trim() !== "" &&
+        allocation !== "unset" &&
+        !Types.ObjectId.isValid(allocation)
+    ) {
+        return {
+            message: "Error: something went invalid allocation",
+            timestamp: Date.now(),
+        };
+    }
+    if (allocation !== "unset") {
+        editExpenseObj.allocation = allocation;
     }
 
     if (
@@ -328,7 +444,7 @@ export async function deleteExpense(
  *
  *
  *
- * END OF EXPENSES
+ * START OF INCOME
  *
  *
  *
@@ -432,7 +548,7 @@ export async function addIncome(
 
     newIncomeObj.notes = notes;
 
-    console.log(Util.inspect(newIncomeObj, false, null, true));
+    // console.log(Util.inspect(newIncomeObj, false, null, true));
 
     try {
         await connectDB();
@@ -455,7 +571,7 @@ export async function addIncome(
  *
  *
  *
- * END OF INCOME
+ * START OF BUDGET
  *
  *
  *
@@ -524,7 +640,7 @@ export async function addBudget(
 
     newBudgetObj.notes = notes;
 
-    console.log(Util.inspect(newBudgetObj, false, null, true));
+    // console.log(Util.inspect(newBudgetObj, false, null, true));
 
     try {
         await connectDB();

@@ -1,10 +1,12 @@
 "use client";
-import { addBudget } from "@/app/actions";
+import { INTERVAL } from "@/app/(db)/common";
+import { addIncome } from "@/app/actions";
+import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { toast } from "react-toastify";
 import Select from "react-select";
-import { INTERVAL } from "@/app/(db)/common";
+// import { FaXmark } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 const initialState = {
     message: null as null | string,
@@ -19,37 +21,32 @@ const SubmitButton = () => {
             type="submit"
             aria-disabled={pending}
         >
-            Add Budget
+            Add Income
         </button>
     );
 };
 
-function AddBudget({
-    userId,
-    toggleShowState,
-}: {
-    userId: string;
-    toggleShowState: () => void;
-}) {
-    const [state, addBudgetAction] = useActionState(addBudget, initialState);
+function AddIncomeForm({ userId }: { userId: string }) {
+    const [state, addIncomeAction] = useActionState(addIncome, initialState);
+
+    const router = useRouter();
 
     const { message } = state;
 
     useEffect(() => {
         if (message?.includes("Success")) {
             toast.success(message);
-            toggleShowState();
         }
         if (message?.includes("Error")) toast.error(message);
-    }, [message, toggleShowState]);
+    }, [message]);
 
     return (
         <form
-            action={addBudgetAction}
-            id="add-budget-form"
+            action={addIncomeAction}
+            id="add-income-form"
             className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2] my-4"
         >
-            <h2 className="mt-1">Add Budget</h2>
+            <h2 className="mt-1">Add Income</h2>
             <div className="flex flex-col">
                 <label htmlFor="amount" className="capitalize">
                     amount:
@@ -70,7 +67,7 @@ function AddBudget({
                 <input
                     name="name"
                     id="name"
-                    placeholder="Enter budget name"
+                    placeholder="Enter income name"
                     className=""
                     required
                 />
@@ -87,14 +84,14 @@ function AddBudget({
             </div>
             <div className="flex flex-col">
                 <div>
-                    <span className="capitalize">interval:</span>
+                    <span className="capitalize">pay interval:</span>
                 </div>
-                <div className="flex flex-wrap cursor-not-allowed">
+                <div className="flex flex-wrap">
                     <Select
                         className="flex-1 text-black"
                         placeholder="Select Pay Interval"
                         aria-label="Pay Interval selector"
-                        instanceId="add-budget-pay-Interval"
+                        instanceId="add-income-pay-Interval"
                         options={[
                             { value: "unset", label: "unset" },
                             ...[...INTERVAL].map((val) => ({
@@ -102,9 +99,7 @@ function AddBudget({
                                 label: val,
                             })),
                         ]}
-                        defaultValue={{value: 'monthly', label: 'monthly'}}
-                        name="budget-interval"
-                        isDisabled
+                        name="pay-interval"
                     />
                 </div>
             </div>
@@ -121,7 +116,7 @@ function AddBudget({
             </div>
             <div className="flex gap-2 mb-2">
                 <SubmitButton />
-                <button type="button" onClick={() => toggleShowState()}>
+                <button type="button" onClick={() => router.back()}>
                     Cancel
                 </button>
             </div>
@@ -129,4 +124,4 @@ function AddBudget({
     );
 }
 
-export default AddBudget;
+export default AddIncomeForm;

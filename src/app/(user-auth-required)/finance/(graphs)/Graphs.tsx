@@ -87,17 +87,17 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
         if (expense.allocation) {
             // check if expense allocation is a valid budget id
             const thisBudget = budgets.find(
-                (b) => b._id === expense.allocation
+                (b) => b._id === expense.allocation?._id
             );
             if (!thisBudget) {
-                console.error(
+                console.warn(
                     `Budget Dict: Budget id ${expense.allocation} of expense ${expense._id} is not found`
                 );
                 continue;
             }
             // find previous budget value to accumulate the allocated amount
-            const prev = budgetDict.get(expense.allocation);
-            budgetDict.set(expense.allocation, {
+            const prev = budgetDict.get(expense.allocation?._id);
+            budgetDict.set(expense.allocation?._id, {
                 name: thisBudget.name,
                 maxAmount: thisBudget.amount,
                 allocatedAmount: (prev?.allocatedAmount ?? 0) + expense.cost,
@@ -240,9 +240,9 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
             </div>
             <div>
                 <h1>Budgets</h1>
-                <div className="flex justify-center wrap">
+                <div className="flex justify-center flex-wrap gap-2">
                     {Array.from(budgetDict.entries()).map(([id, budget]) => (
-                        <div key={id} className="flex flex-col basis-64">
+                        <div key={id} className="flex flex-col basis-64 min-w-64 bg-white rounded-sm">
                             <div className="text-center">{budget.name}</div>
                             <div className="h-64 w-full">
                                 <PieChart
@@ -266,7 +266,7 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
                     ))}
                 </div>
             </div>
-            <div className="p-2 bg-white text-black">
+            <div className="p-2 bg-white text-black mt-2">
                 You are{" "}
                 <span
                     className={`underline ${

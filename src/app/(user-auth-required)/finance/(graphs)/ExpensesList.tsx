@@ -5,13 +5,11 @@ import timezone from "dayjs/plugin/timezone";
 import React, { useState } from "react";
 import DeleteExpenses from "../expenses/DeleteExpenses";
 // import AddExpensesForm from "../expenses/add-new/AddExpenses";
-import EditExpenses from "../expenses/EditExpenses";
+// import EditExpenses from "../expenses/EditExpenses";
 import { AnimatePresence } from "motion/react";
 import { EXPENSE_TAG_COLOR_MAP } from "@/app/(lib)/client-commons";
 import { motion } from "motion/react";
 // import Select from "react-select/base";
-import AddIncome from "../(mutations)/(income)/AddIncome";
-import AddBudget from "../(mutations)/(budget)/AddBudget";
 
 dayjs.extend(DayJSUtc);
 dayjs.extend(timezone);
@@ -112,7 +110,7 @@ function ExpensesTabList({
                                 />
                             </div>
                         </div>
-                        <AnimatePresence>
+                        {/* <AnimatePresence>
                             {selectedExpense?._id === _id && (
                                 <EditExpenses
                                     expense={selectedExpense}
@@ -121,7 +119,7 @@ function ExpensesTabList({
                                     }}
                                 />
                             )}
-                        </AnimatePresence>
+                        </AnimatePresence> */}
                     </motion.div>
                 );
             })}
@@ -207,34 +205,7 @@ function ExpensesList({
     budgets: LeanBudgetWithId[];
     userId: string;
 }) {
-    const [_addExpenseState, setAddExpenseState] = useState(false);
-    const [addIncomeState, setAddIncomeState] = useState(false);
-    const [addBudgetState, setAddBudgetState] = useState(false);
     const [selectedTabList, setSelectedTabList] = useState("expenses");
-
-    const toggleStates = (state: string) => {
-        switch (state) {
-            case "expense":
-                setAddExpenseState(true);
-                setAddIncomeState(false);
-                setAddBudgetState(false);
-                break;
-            case "income":
-                setAddExpenseState(false);
-                setAddIncomeState(true);
-                setAddBudgetState(false);
-                break;
-            case "budget":
-                setAddExpenseState(false);
-                setAddIncomeState(false);
-                setAddBudgetState(true);
-                break;
-            default:
-                setAddExpenseState(false);
-                setAddIncomeState(false);
-                setAddBudgetState(false);
-        }
-    };
 
     return (
         <div className="">
@@ -266,7 +237,7 @@ function ExpensesList({
                         />
                     </motion.div>
                 )} */}
-                {addIncomeState && (
+                {/* {addIncomeState && (
                     <motion.div
                         key="add-income-form-container"
                         exit={{ opacity: 0 }}
@@ -287,8 +258,8 @@ function ExpensesList({
                             toggleShowState={() => toggleStates("")}
                         />
                     </motion.div>
-                )}
-                {addBudgetState && (
+                )} */}
+                {/* {addBudgetState && (
                     <motion.div
                         key="add-budget-form-container"
                         exit={{ opacity: 0 }}
@@ -309,7 +280,7 @@ function ExpensesList({
                             toggleShowState={() => toggleStates("")}
                         />
                     </motion.div>
-                )}
+                )} */}
             </AnimatePresence>
             <hr />
             <div className="flex gap-2">

@@ -1,16 +1,51 @@
 import React from "react";
 import { auth } from "@/../auth";
 import ExpensesList from "./ExpensesList";
-import { getExpenses } from "@/app/actions";
+import { getBudget, getExpenses } from "@/app/actions";
 import { NODE_ENV } from "@/app/(config)/constants";
 import Link from "next/link";
 
-async function page() {
+async function page({
+    // params,
+    searchParams,
+}: {
+    // params: Promise<{ muscleGroup: string }>;
+    searchParams: Promise<{
+        searchKeyword: string;
+        sort: string;
+        deleted: string;
+        skip: string;
+        limit: string;
+    }>;
+}) {
     const session = await auth();
 
+    const searchParamsVal = await searchParams;
+
     if (!session) return <div>Seems like you are not logged in</div>;
-    const expensesStringified = await getExpenses({ userId: session.user.id });
-    const expenses = JSON.parse(expensesStringified) as LeanExpenseWithId[];
+    const [budgetStringified, expensesStringified] = await Promise.all([
+        await getBudget({ userId: session.user.id }),
+        await getExpenses({
+            userId: session.user.id,
+            searchKeyword: searchParamsVal.searchKeyword,
+            sort: searchParamsVal.sort,
+            deleted: ["only", "include"].includes(searchParamsVal.deleted)
+                ? (searchParamsVal.deleted as "only" | "include")
+                : undefined,
+            skip: Number.isInteger(Number(searchParamsVal.skip))
+                ? Number(searchParamsVal.skip)
+                : 0,
+            limit: Number.isInteger(Number(searchParamsVal.limit))
+                ? Number(searchParamsVal.limit)
+                : 5,
+        }),
+    ]);
+    const expenses = JSON.parse(
+        expensesStringified.expenses
+    ) as LeanExpenseWithId[];
+    const totalExpensesPages = expensesStringified.totalPages;
+    const totalExpensesCount = expensesStringified.totalItems;
+    const budgets = JSON.parse(budgetStringified) as LeanBudgetWithId[];
 
     return (
         <main className="overflow-auto flex-1">
@@ -47,7 +82,13 @@ async function page() {
                         Add New Expense
                     </Link>
                 </div>
-                <ExpensesList expenses={expenses} userId={session.user.id} />
+                <ExpensesList
+                    expenses={expenses}
+                    budgets={budgets}
+                    userId={session.user.id}
+                    totalPages={totalExpensesPages}
+                    totalCount={totalExpensesCount}
+                />
             </div>
         </main>
     );

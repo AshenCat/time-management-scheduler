@@ -11,11 +11,11 @@ My personal workout and finance tracker
 `docker compose up --watch` to run dev server and db. Make sure the 'watch' flag is enabled.
 
 ## TODO
-
+-   `finance/expense` filters - on-going
+-   `finance/income` filters
+-   `finance/budget` filters
 -   `finance/expenses/{id}`
--   `finance/income/add`
 -   `finance/income/{id}`
--   `finance/budget/add`
 -   `finance/budget/{id}`
 -   (ongoing on the side)full refactor `finance/(graphs)/ExpensesList.tsx`
 
@@ -75,9 +75,9 @@ My personal workout and finance tracker
 
 ### MID PRIORITY
 
--   [ ] finance - find a suitable way to make input take multiple values for selecting tags
--   [ ] finance - add expense looks atrocious
--   [ ] finance - accumulator for net income is not counting 1 time pay properly
+-   [x] finance - ~~find a suitable way to make input take multiple values for selecting tags~~
+-   [ ] finance - add expense/income/budget looks atrocious
+-   [ ] general - sidebar needs proper folder collapse
 
 ### LOW PRIORITY
 

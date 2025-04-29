@@ -28,7 +28,13 @@ const SubmitButton = () => {
     );
 };
 
-function AddExpensesForm({ userId }: { userId: string }) {
+function AddExpensesForm({
+    userId,
+    budgets,
+}: {
+    userId: string;
+    budgets: LeanBudgetWithId[];
+}) {
     const [state, addExpenseAction] = useActionState(addExpense, initialState);
     const router = useRouter();
 
@@ -96,6 +102,27 @@ function AddExpensesForm({ userId }: { userId: string }) {
                     defaultValue={dayjs(new Date()).format("YYYY-MM-DD")}
                     max={dayjs(new Date()).format("YYYY-MM-DD")}
                 />
+            </div>
+            <div className="flex flex-col">
+                <div>
+                    <span className="capitalize">Budget allocation:</span>
+                </div>
+                <div className="flex flex-wrap">
+                    <Select
+                        className="flex-1 text-black"
+                        placeholder="Select Allocation"
+                        aria-label="allocation selector"
+                        instanceId="add-expense-allocation"
+                        options={[
+                            { value: "unset", label: "unset" },
+                            ...budgets.map((val) => ({
+                                value: val._id,
+                                label: val.name,
+                            })),
+                        ]}
+                        name="allocation"
+                    />
+                </div>
             </div>
             <div className="flex flex-col">
                 <div>

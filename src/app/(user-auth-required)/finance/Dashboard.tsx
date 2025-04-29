@@ -21,19 +21,19 @@ async function Dashboard({ session }: { session: Session }) {
 
     return (
         <main className="overflow-auto flex-1">
-            <div className="w-9/12 mx-auto relative">
+            <div className="w-9/12 mx-auto relative overflow-hidden">
                 <h1>
                     userId: {session.user.id}{" "}
                     {NODE_ENV !== "prod" ? " - DEV MODE" : ""}
                 </h1>
 
                 <Graphs budgets={budgets} expenses={expenses} income={income} />
-                <ExpensesList
+                {/* <ExpensesList
                     income={income}
                     expenses={expenses.sort((_, __) => -1)}
                     budgets={budgets}
                     userId={session.user.id}
-                />
+                /> */}
             </div>
         </main>
     );
