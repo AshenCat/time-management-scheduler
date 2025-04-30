@@ -53,7 +53,7 @@ function EditExpenses({
         return <></>;
     }
 
-    const { cost, name, userId, subscriptionInterval, date, tags, notes, _id } =
+    const { cost, name, subscriptionInterval, date, tags, notes, _id } =
         expense;
 
     return (
@@ -92,14 +92,6 @@ function EditExpenses({
                     required
                 />
             </div>
-            <input
-                name="userId"
-                id="userId"
-                defaultValue={userId}
-                className=""
-                required
-                hidden
-            />
             <input
                 name="expenseId"
                 id="expenseId"

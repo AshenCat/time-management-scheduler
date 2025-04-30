@@ -16,6 +16,7 @@ async function page({
         deleted: string;
         skip: string;
         limit: string;
+        tags: string;
     }>;
 }) {
     const session = await auth();
@@ -24,9 +25,8 @@ async function page({
 
     if (!session) return <div>Seems like you are not logged in</div>;
     const [budgetStringified, expensesStringified] = await Promise.all([
-        await getBudget({ userId: session.user.id }),
+        await getBudget({ limit: 9999 }),
         await getExpenses({
-            userId: session.user.id,
             searchKeyword: searchParamsVal.searchKeyword,
             sort: searchParamsVal.sort,
             deleted: ["only", "include"].includes(searchParamsVal.deleted)
@@ -38,6 +38,7 @@ async function page({
             limit: Number.isInteger(Number(searchParamsVal.limit))
                 ? Number(searchParamsVal.limit)
                 : 5,
+            queryTags: searchParamsVal.tags,
         }),
     ]);
     const expenses = JSON.parse(
@@ -45,7 +46,7 @@ async function page({
     ) as LeanExpenseWithId[];
     const totalExpensesPages = expensesStringified.totalPages;
     const totalExpensesCount = expensesStringified.totalItems;
-    const budgets = JSON.parse(budgetStringified) as LeanBudgetWithId[];
+    const budgets = JSON.parse(budgetStringified.budget) as LeanBudgetWithId[];
 
     return (
         <main className="overflow-auto flex-1">
@@ -85,7 +86,6 @@ async function page({
                 <ExpensesList
                     expenses={expenses}
                     budgets={budgets}
-                    userId={session.user.id}
                     totalPages={totalExpensesPages}
                     totalCount={totalExpensesCount}
                 />

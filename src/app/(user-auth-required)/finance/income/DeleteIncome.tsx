@@ -1,5 +1,5 @@
 "use client";
-import { deleteExpense } from "@/app/actions";
+import { deleteIncome } from "@/app/actions";
 import React, { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "react-toastify";
@@ -21,9 +21,13 @@ const SubmitButton = () => {
         </button>
     );
 };
-function DeleteExpenses({ expenseId }: { expenseId: string }) {
-    const [state, deleteExpenseAction] = useActionState(
-        deleteExpense,
+function DeleteIncome({
+    incomeId,
+}: {
+    incomeId: string;
+}) {
+    const [state, deleteIncomeAction] = useActionState(
+        deleteIncome,
         initialState
     );
 
@@ -34,11 +38,11 @@ function DeleteExpenses({ expenseId }: { expenseId: string }) {
     }, [state]);
 
     return (
-        <form action={deleteExpenseAction} className="flex flex-1">
-            <input type="hidden" defaultValue={expenseId} name="expenseId" />
+        <form action={deleteIncomeAction} className="flex flex-1">
+            <input type="hidden" defaultValue={incomeId} name="incomeId" />
             <SubmitButton />
         </form>
     );
 }
 
-export default DeleteExpenses;
+export default DeleteIncome;

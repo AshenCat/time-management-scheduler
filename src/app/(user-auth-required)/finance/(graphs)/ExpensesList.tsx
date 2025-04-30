@@ -16,10 +16,8 @@ dayjs.extend(timezone);
 
 function ExpensesTabList({
     expenses,
-    userId,
 }: {
     expenses: LeanExpenseWithId[];
-    userId: string;
 }) {
     const [selectedExpense, setSelectedExpense] =
         useState<LeanExpenseWithId | null>(null);
@@ -105,7 +103,6 @@ function ExpensesTabList({
                                     EDIT
                                 </button>
                                 <DeleteExpenses
-                                    userId={userId}
                                     expenseId={_id}
                                 />
                             </div>
@@ -131,7 +128,6 @@ function IncomeTabList({
     allIncome,
 }: {
     allIncome: LeanIncomeWithId[];
-    userId: string;
 }) {
     const [selectedIncome, setSelectedIncome] =
         useState<LeanIncomeWithId | null>(null);
@@ -197,13 +193,11 @@ function IncomeTabList({
 
 function ExpensesList({
     expenses,
-    userId,
     income,
 }: {
     expenses: LeanExpenseWithId[];
     income: LeanIncomeWithId[];
     budgets: LeanBudgetWithId[];
-    userId: string;
 }) {
     const [selectedTabList, setSelectedTabList] = useState("expenses");
 
@@ -298,10 +292,10 @@ function ExpensesList({
                 </button>
             </div>
             {selectedTabList === "expenses" && (
-                <ExpensesTabList expenses={expenses} userId={userId} />
+                <ExpensesTabList expenses={expenses} />
             )}
             {selectedTabList === "income" && (
-                <IncomeTabList allIncome={income} userId={userId} />
+                <IncomeTabList allIncome={income} />
             )}
         </div>
     );

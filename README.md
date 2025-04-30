@@ -11,12 +11,12 @@ My personal workout and finance tracker
 `docker compose up --watch` to run dev server and db. Make sure the 'watch' flag is enabled.
 
 ## TODO
--   `finance/expense` filters - on-going
+-   `finance/expenses` filters - on-going
 -   `finance/income` filters
--   `finance/budget` filters
+-   `finance/budgets` filters
 -   `finance/expenses/{id}`
 -   `finance/income/{id}`
--   `finance/budget/{id}`
+-   `finance/budgets/{id}`
 -   (ongoing on the side)full refactor `finance/(graphs)/ExpensesList.tsx`
 
 -   Base Workout Route

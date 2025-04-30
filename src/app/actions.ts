@@ -17,6 +17,7 @@ import { FilterQuery, Types } from "mongoose";
 import Income from "./(db)/models/income.model";
 import Budget from "./(db)/models/budget.model";
 import { redirect } from "next/navigation";
+import { auth } from "../../auth";
 
 /*********************************************************************************
  *
@@ -29,7 +30,6 @@ import { redirect } from "next/navigation";
  *********************************************************************************/
 
 export async function getExpenses({
-    userId,
     from,
     to,
     sort,
@@ -37,8 +37,8 @@ export async function getExpenses({
     deleted,
     skip,
     limit,
+    queryTags,
 }: {
-    userId: string;
     from?: Date;
     to?: Date;
     sort?: string;
@@ -46,18 +46,14 @@ export async function getExpenses({
     deleted?: "only" | "include" | undefined;
     skip?: number;
     limit?: number;
+    queryTags?: string;
 }) {
     try {
-        // if (from) {
-        //     if (isStringEmptyOrNullish(to)) {
-        //         throw new Error("filters from and to must be exclusively set");
-        //     }
-        // }
-        // if (to) {
-        //     if (isStringEmptyOrNullish(from)) {
-        //         throw new Error("filters from and to must be exclusively set");
-        //     }
-        // }
+        const session = await auth();
+
+        const userId = session?.user.id;
+
+        if (!session) throw new Error("Unauthorized");
 
         const query = {
             $and: [{ userId }],
@@ -86,6 +82,16 @@ export async function getExpenses({
         // if deleted === 'include', we just dont set it on the query itself
         if (from) query.date = { ...{ $gte: from } };
         if (to) query.date = { $lte: to, ...query.date };
+
+        if (queryTags && queryTags !== "") {
+            const qt = queryTags.split(",");
+            query.$and = [
+                ...(query.$and ?? []),
+                {
+                    tags: { $in: qt },
+                },
+            ];
+        }
 
         const sortQuery = {} as {
             [key: string]: 1 | -1;
@@ -158,11 +164,17 @@ export async function addExpense(
     const subscriptionInterval = checkIfStringNull(
         String(formData.get("subscription-interval"))
     );
-    const userId = checkIfStringNull(String(formData.get("userId")));
+
     const allocation = checkIfStringNull(String(formData.get("allocation")));
     const date = checkIfStringNull(String(formData.get("date")));
     const notes = checkIfStringNull(String(formData.get("notes")));
     const tags = checkIfStringNull(String(formData.get("tags")));
+
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
 
     const newExpenseObj: {
         [key: string]: string | number | string[] | boolean | null;
@@ -269,7 +281,6 @@ export async function editExpense(
     const subscriptionInterval = checkIfStringNull(
         String(formData.get("subscription-interval"))
     );
-    const userId = checkIfStringNull(String(formData.get("userId")));
     const allocation = checkIfStringNull(String(formData.get("allocation")));
     const expenseId = checkIfStringNull(String(formData.get("expenseId")));
     const date = checkIfStringNull(String(formData.get("date")));
@@ -279,6 +290,12 @@ export async function editExpense(
     // for (const val of formData.entries()) {
     //     console.log(val);
     // }
+
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
 
     const editExpenseObj: { [key: string]: string | number | string[] | null } =
         {};
@@ -393,12 +410,14 @@ export async function deleteExpense(
     prevState: { message: string | null; timestamp: null | number },
     formData: FormData
 ) {
-    const userId = checkIfStringNull(String(formData.get("userId")));
     const expenseId = checkIfStringNull(String(formData.get("expenseId")));
 
-    if (isStringEmptyOrNullish(expenseId) || isStringEmptyOrNullish(userId)) {
-        throw new Error("invalid expenseId");
-    }
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
+
     try {
         await connectDB();
 
@@ -451,47 +470,108 @@ export async function deleteExpense(
  *********************************************************************************/
 
 export async function getIncome({
-    userId,
     from,
     to,
+    sort,
+    searchKeyword,
+    deleted,
+    skip,
+    limit,
 }: {
-    userId: string;
-    from?: string;
-    to?: string;
+    from?: Date;
+    to?: Date;
+    sort?: string;
+    searchKeyword?: string;
+    deleted?: "only" | "include" | undefined;
+    skip?: number;
+    limit?: number;
 }) {
     try {
-        if (from) {
-            if (isStringEmptyOrNullish(to)) {
-                throw new Error("filters from and to must be exclusively set");
-            }
-        }
-        if (to) {
-            if (isStringEmptyOrNullish(from)) {
-                throw new Error("filters from and to must be exclusively set");
-            }
-        }
-        await connectDB();
+        const session = await auth();
+
+        const userId = session?.user.id;
+
+        if (!session) throw new Error("Unauthorized");
+
         const query = {
-            $or: [
-                {
-                    deleted: false,
-                },
-                {
-                    deleted: undefined,
-                },
-            ],
             $and: [{ userId }],
         } as FilterQuery<{
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             [key: string]: any;
         }>;
 
-        if (from) {
-            query.date = { $gte: from, $lt: to };
+        if (!deleted)
+            query.$and = [
+                ...(query.$and ?? []),
+                {
+                    $or: [
+                        {
+                            deleted: false,
+                        },
+                        {
+                            deleted: undefined,
+                        },
+                    ],
+                },
+            ];
+        else if (deleted === "only") {
+            query.deleted = true;
+        }
+        // if deleted === 'include', we just dont set it on the query itself
+        if (from) query.date = { ...{ $gte: from } };
+        if (to) query.date = { $lte: to, ...query.date };
+
+        const sortQuery = {} as {
+            [key: string]: 1 | -1;
+        };
+
+        // console.log("sort========");
+        // console.log(sort);
+
+        if (sort && sort.trim() !== "") {
+            const sortEntry = sort.split(",");
+            if (sortEntry.length > 1) {
+                sortQuery[sortEntry[0]] = Number(sortEntry[1]) as 1 | -1;
+            }
+            // console.log("sortQuery");
+            // console.log(sortQuery);
         }
 
-        const income = await Income.find(query).lean();
-        return JSON.stringify(income);
+        // KEYWORD SEARCH
+        // console.log("KEYWORD");
+        // console.log(searchKeyword);
+        if (searchKeyword && searchKeyword.trim() !== "") {
+            const schemaFields = Object.keys(Expense.schema.paths);
+            const searchConditions = schemaFields
+                .map((field) => {
+                    if (Expense.schema.paths[field].instance === "String")
+                        return {
+                            [field]: { $regex: searchKeyword, $options: "i" },
+                        };
+                    return null;
+                })
+                .filter((v) => !!v);
+            query.$or = [...(query.$or ?? []), ...searchConditions];
+        }
+
+        await connectDB();
+
+        const [income, count] = await Promise.all([
+            Income.find(query)
+                .sort(sortQuery)
+                .skip((skip ?? 0) * (limit ?? 5))
+                .limit(limit ?? 5)
+                .lean(),
+            Income.countDocuments(query),
+        ]);
+
+        // console.log("count");
+        // console.log(count);
+        return {
+            income: JSON.stringify(income),
+            totalItems: count,
+            totalPages: Math.ceil(count / (limit ?? 5)),
+        };
     } catch (err) {
         printError("getIncome", err as Error);
         throw err;
@@ -505,8 +585,13 @@ export async function addIncome(
     const amount = Number(formData.get("amount"));
     const name = checkIfStringNull(String(formData.get("name")));
     const payInterval = checkIfStringNull(String(formData.get("pay-interval")));
-    const userId = checkIfStringNull(String(formData.get("userId")));
     const notes = checkIfStringNull(String(formData.get("notes")));
+
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
 
     const newIncomeObj: {
         [key: string]: string | number | string[] | boolean | null;
@@ -567,6 +652,49 @@ export async function addIncome(
     }
 }
 
+export async function deleteIncome(
+    prevState: { message: string | null; timestamp: null | number },
+    formData: FormData
+) {
+    const userId = checkIfStringNull(String(formData.get("userId")));
+    const incomeId = checkIfStringNull(String(formData.get("incomeId")));
+
+    if (isStringEmptyOrNullish(incomeId) || isStringEmptyOrNullish(userId)) {
+        throw new Error("invalid incomeId");
+    }
+    try {
+        await connectDB();
+
+        const deletedIncome = await Income.findOne({
+            _id: incomeId,
+            userId,
+        });
+
+        if (!deletedIncome) {
+            throw new Error("invalid document");
+        }
+
+        // await deletedIncome.deleteOne();
+
+        deletedIncome.set("deleted", true);
+
+        await deletedIncome.save();
+
+        revalidatePath("/finance");
+
+        return {
+            message: `Successfully Deleted item`,
+            timestamp: Date.now(),
+        };
+    } catch (err) {
+        printError("getIncome", err as Error);
+        return {
+            message: "Error: Something went wrong.",
+            timestamp: Date.now(),
+        };
+    }
+}
+
 /*********************************************************************************
  *
  *
@@ -577,15 +705,111 @@ export async function addIncome(
  *
  *********************************************************************************/
 
-export async function getBudget({ userId }: { userId: string }) {
+export async function getBudget({
+    from,
+    to,
+    sort,
+    searchKeyword,
+    deleted,
+    skip,
+    limit,
+}: {
+    from?: Date;
+    to?: Date;
+    sort?: string;
+    searchKeyword?: string;
+    deleted?: "only" | "include" | undefined;
+    skip?: number;
+    limit?: number;
+}) {
     try {
+        const session = await auth();
+
+        const userId = session?.user.id;
+
+        if (!session) throw new Error("Unauthorized");
+
+        const query = {
+            $and: [{ userId }],
+        } as FilterQuery<{
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            [key: string]: any;
+        }>;
+
+        if (!deleted)
+            query.$and = [
+                ...(query.$and ?? []),
+                {
+                    $or: [
+                        {
+                            deleted: false,
+                        },
+                        {
+                            deleted: undefined,
+                        },
+                    ],
+                },
+            ];
+        else if (deleted === "only") {
+            query.deleted = true;
+        }
+        // if deleted === 'include', we just dont set it on the query itself
+        if (from) query.date = { ...{ $gte: from } };
+        if (to) query.date = { $lte: to, ...query.date };
+
+        const sortQuery = {} as {
+            [key: string]: 1 | -1;
+        };
+
+        // console.log("sort========");
+        // console.log(sort);
+
+        if (sort && sort.trim() !== "") {
+            const sortEntry = sort.split(",");
+            if (sortEntry.length > 1) {
+                sortQuery[sortEntry[0]] = Number(sortEntry[1]) as 1 | -1;
+            }
+            // console.log("sortQuery");
+            // console.log(sortQuery);
+        }
+
+        // KEYWORD SEARCH
+        // console.log("KEYWORD");
+        // console.log(searchKeyword);
+        if (searchKeyword && searchKeyword.trim() !== "") {
+            const schemaFields = Object.keys(Budget.schema.paths);
+            const searchConditions = schemaFields
+                .map((field) => {
+                    if (Budget.schema.paths[field].instance === "String")
+                        return {
+                            [field]: { $regex: searchKeyword, $options: "i" },
+                        };
+                    return null;
+                })
+                .filter((v) => !!v);
+            query.$or = [...(query.$or ?? []), ...searchConditions];
+        }
+
         await connectDB();
 
-        const budgetList = await Budget.find({ userId }).lean();
+        const [budget, count] = await Promise.all([
+            Budget.find(query)
+                .sort(sortQuery)
+                .skip((skip ?? 0) * (limit ?? 5))
+                .limit(limit ?? 5)
+                .lean(),
+            Budget.countDocuments(query),
+        ]);
 
-        return JSON.stringify(budgetList);
+        // console.log("count");
+        // console.log(count);
+        return {
+            budget: JSON.stringify(budget),
+            totalItems: count,
+            totalPages: Math.ceil(count / (limit ?? 5)),
+        };
     } catch (err) {
-        printError("getExpenses", err as Error);
+        printError("getBudget", err as Error);
         throw err;
     }
 }
@@ -597,8 +821,13 @@ export async function addBudget(
     const amount = Number(formData.get("amount"));
     const name = checkIfStringNull(String(formData.get("name")));
     const budgetInterval = checkIfStringNull(String(formData.get("interval")));
-    const userId = checkIfStringNull(String(formData.get("userId")));
     const notes = checkIfStringNull(String(formData.get("notes")));
+
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
 
     const newBudgetObj: {
         [key: string]: string | number | string[] | boolean | null;
@@ -652,6 +881,63 @@ export async function addBudget(
         return { message: `Success: Budget added!`, timestamp: Date.now() };
     } catch (err) {
         printError("addBudget", err as Error);
+        return {
+            message: "Error: Something went wrong.",
+            timestamp: Date.now(),
+        };
+    }
+}
+
+// Changed from actually deleting to toggling deleted budget
+export async function deleteBudget(
+    prevState: { message: string | null; timestamp: null | number },
+    formData: FormData
+) {
+    const budgetId = checkIfStringNull(String(formData.get("budgetId")));
+
+    const session = await auth();
+
+    const userId = session?.user.id;
+
+    if (!session) throw new Error("Unauthorized");
+
+    if (isStringEmptyOrNullish(budgetId) || isStringEmptyOrNullish(userId)) {
+        throw new Error("invalid budgetId");
+    }
+    try {
+        await connectDB();
+
+        const deletedBudget = await Budget.findOne({
+            _id: budgetId,
+            userId,
+        });
+
+        if (!deletedBudget) {
+            throw new Error("invalid document");
+        }
+
+        // await deletedBudget.deleteOne();
+
+        deletedBudget.set("deleted", true);
+
+        await deletedBudget.save();
+
+        // const result = await Budget.findOneAndUpdate(
+        //     { _id: budgetId, userId },
+        //     { deleted: true },
+        //     { new: true, upsert: true }
+        // );
+
+        // console.log(result);
+
+        revalidatePath("/finance");
+
+        return {
+            message: `Successfully Deleted item`,
+            timestamp: Date.now(),
+        };
+    } catch (err) {
+        printError("getBudgets", err as Error);
         return {
             message: "Error: Something went wrong.",
             timestamp: Date.now(),

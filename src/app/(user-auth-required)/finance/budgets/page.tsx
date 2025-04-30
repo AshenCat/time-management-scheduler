@@ -5,12 +5,39 @@ import { NODE_ENV } from "@/app/(config)/constants";
 import Link from "next/link";
 import BudgetList from "./BudgetList";
 
-async function page() {
+async function page({
+    // params,
+    searchParams,
+}: {
+    // params: Promise<{ muscleGroup: string }>;
+    searchParams: Promise<{
+        searchKeyword: string;
+        sort: string;
+        deleted: string;
+        skip: string;
+        limit: string;
+    }>;
+}) {
     const session = await auth();
 
+    const searchParamsVal = await searchParams;
     if (!session) return <div>Seems like you are not logged in</div>;
-    const budgetStringified = await getBudget({ userId: session.user.id });
-    const budget = JSON.parse(budgetStringified) as LeanBudgetWithId[];
+    const budgetStringified = await getBudget({
+        searchKeyword: searchParamsVal.searchKeyword,
+        sort: searchParamsVal.sort,
+        deleted: ["only", "include"].includes(searchParamsVal.deleted)
+            ? (searchParamsVal.deleted as "only" | "include")
+            : undefined,
+        skip: Number.isInteger(Number(searchParamsVal.skip))
+            ? Number(searchParamsVal.skip)
+            : 0,
+        limit: Number.isInteger(Number(searchParamsVal.limit))
+            ? Number(searchParamsVal.limit)
+            : 5,
+    });
+    const budget = JSON.parse(budgetStringified.budget) as LeanBudgetWithId[];
+    const totalBudgetPages = budgetStringified.totalPages;
+    const totalBudgetCount = budgetStringified.totalItems;
 
     return (
         <main className="overflow-auto flex-1">
@@ -47,7 +74,11 @@ async function page() {
                         Add New Budget
                     </Link>
                 </div>
-                <BudgetList budget={budget} userId={session.user.id} />
+                <BudgetList
+                    budget={budget}
+                    totalPages={totalBudgetPages}
+                    totalCount={totalBudgetCount}
+                />
             </div>
         </main>
     );

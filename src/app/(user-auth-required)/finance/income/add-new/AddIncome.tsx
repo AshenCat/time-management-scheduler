@@ -26,7 +26,7 @@ const SubmitButton = () => {
     );
 };
 
-function AddIncomeForm({ userId }: { userId: string }) {
+function AddIncomeForm() {
     const [state, addIncomeAction] = useActionState(addIncome, initialState);
 
     const router = useRouter();
@@ -70,16 +70,6 @@ function AddIncomeForm({ userId }: { userId: string }) {
                     placeholder="Enter income name"
                     className=""
                     required
-                />
-            </div>
-            <div className="flex flex-col">
-                <input
-                    name="userId"
-                    id="userId"
-                    defaultValue={userId}
-                    className=""
-                    required
-                    hidden
                 />
             </div>
             <div className="flex flex-col">

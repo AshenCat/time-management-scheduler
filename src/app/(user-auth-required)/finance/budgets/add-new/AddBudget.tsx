@@ -25,11 +25,7 @@ const SubmitButton = () => {
     );
 };
 
-function AddBudget({
-    userId,
-}: {
-    userId: string;
-}) {
+function AddBudget() {
     const [state, addBudgetAction] = useActionState(addBudget, initialState);
     const router = useRouter();
 
@@ -72,16 +68,6 @@ function AddBudget({
                     placeholder="Enter budget name"
                     className=""
                     required
-                />
-            </div>
-            <div className="flex flex-col">
-                <input
-                    name="userId"
-                    id="userId"
-                    defaultValue={userId}
-                    className=""
-                    required
-                    hidden
                 />
             </div>
             <div className="flex flex-col">

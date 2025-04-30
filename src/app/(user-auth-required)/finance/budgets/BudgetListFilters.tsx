@@ -5,20 +5,19 @@ import SearchDeleted from "@/app/(components)/(ListComponents)/(filters)/SearchD
 import SortToggleButton from "@/app/(components)/(ListComponents)/(filters)/SortToggleButton";
 import React from "react";
 
-function ExpensesListFilters() {
-
+function BudgetListFilters() {
     return (
         <div className="flex flex-col gap-2 ">
             <div className="flex justify-between">
-                <SearchDeleted URL="/finance/expenses?" />
-                <SearchByTags URL="/finance/expenses?" />
+                <SearchDeleted URL="/finance/budgets?" />
+                <SearchByTags URL="/finance/budgets?" />
             </div>
             <div className="flex flex-col md:flex-row justify-between">
-                <SortToggleButton URL="/finance/expenses?" />
-                <KeywordSearchBar URL="/finance/expenses?" />
+                <SortToggleButton URL="/finance/budgets?" />
+                <KeywordSearchBar URL="/finance/budgets?" />
             </div>
         </div>
     );
 }
 
-export default ExpensesListFilters;
+export default BudgetListFilters;

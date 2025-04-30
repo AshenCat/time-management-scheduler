@@ -5,13 +5,40 @@ import { NODE_ENV } from "@/app/(config)/constants";
 import Link from "next/link";
 import IncomeList from "./IncomeList";
 
-async function page() {
+async function page({
+    // params,
+    searchParams,
+}: {
+    // params: Promise<{ muscleGroup: string }>;
+    searchParams: Promise<{
+        searchKeyword: string;
+        sort: string;
+        deleted: string;
+        skip: string;
+        limit: string;
+    }>;
+}) {
     const session = await auth();
 
-    if (!session) return <div>Seems like you are not logged in</div>;
-    const incomeStringified = await getIncome({ userId: session.user.id });
-    const income = JSON.parse(incomeStringified) as LeanIncomeWithId[];
+    const searchParamsVal = await searchParams;
 
+    if (!session) return <div>Seems like you are not logged in</div>;
+    const incomeStringified = await getIncome({
+        searchKeyword: searchParamsVal.searchKeyword,
+        sort: searchParamsVal.sort,
+        deleted: ["only", "include"].includes(searchParamsVal.deleted)
+            ? (searchParamsVal.deleted as "only" | "include")
+            : undefined,
+        skip: Number.isInteger(Number(searchParamsVal.skip))
+            ? Number(searchParamsVal.skip)
+            : 0,
+        limit: Number.isInteger(Number(searchParamsVal.limit))
+            ? Number(searchParamsVal.limit)
+            : 5,
+    });
+    const income = JSON.parse(incomeStringified.income) as LeanIncomeWithId[];
+    const totalIncomePages = incomeStringified.totalPages;
+    const totalIncomeCount = incomeStringified.totalItems;
     return (
         <main className="overflow-auto flex-1">
             <div className="w-9/12 mx-auto relative">
@@ -47,7 +74,11 @@ async function page() {
                         Add New Income
                     </Link>
                 </div>
-                <IncomeList income={income} userId={session.user.id} />
+                <IncomeList
+                    income={income}
+                    totalPages={totalIncomePages}
+                    totalCount={totalIncomeCount}
+                />
             </div>
         </main>
     );

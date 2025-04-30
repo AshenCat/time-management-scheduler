@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DeleteExpenses from "./DeleteExpenses";
 import dayjs from "dayjs";
 import DayJSUtc from "dayjs/plugin/utc";
@@ -7,114 +7,19 @@ import timezone from "dayjs/plugin/timezone";
 import { EXPENSE_TAG_COLOR_MAP } from "@/app/(lib)/client-commons";
 import EditExpenses from "./EditExpenses";
 import ExpensesListFilters from "./ExpensesListFilters";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FaCaretLeft, FaCaretRight } from "react-icons/fa6";
-import { useDebounce } from "@/app/(components)/(reusable)/hooks/useDebounce";
-import { useIsMount } from "@/app/(components)/(reusable)/hooks/useIsMount";
+import Pagination from "@/app/(components)/(ListComponents)/Pagination";
 
 dayjs.extend(DayJSUtc);
 dayjs.extend(timezone);
 
-const Pagination = ({
-    totalPages,
-    totalCount,
-}: {
-    totalPages: number;
-    totalCount: number;
-}) => {
-    const searchParams = useSearchParams();
-    const skip = Number(searchParams.get("skip"))
-        ? Number(searchParams.get("skip"))
-        : 0;
-    const limit = Number(searchParams.get("limit"))
-        ? Number(searchParams.get("limit"))
-        : 5;
-
-    const isMount = useIsMount();
-    const router = useRouter();
-    const [debouncedPage, setDebouncedPage] = useDebounce<number>(skip ?? 0);
-
-    useEffect(() => {
-        console.log("debouncedPage", debouncedPage);
-        if (!isMount) {
-            const nextSearchParams = new URLSearchParams(
-                searchParams.toString()
-            );
-            if (debouncedPage - 1 > 0) {
-                nextSearchParams.set("skip", "" + (debouncedPage - 1));
-                router.replace(
-                    "/finance/expenses?" + nextSearchParams.toString()
-                );
-            } else {
-                nextSearchParams.delete("skip");
-                router.replace(
-                    "/finance/expenses?" + nextSearchParams.toString()
-                );
-            }
-        }
-    }, [isMount, debouncedPage]);
-
-    const pageItemsCountStart = limit * skip + 1;
-    const pageItemsCountEnd = limit * skip + limit;
-
-    return (
-        <div className="flex flex-col">
-            <div>
-                {`${
-                    totalCount <= pageItemsCountStart
-                        ? totalCount
-                        : pageItemsCountStart
-                } - ${
-                    totalCount <= pageItemsCountEnd
-                        ? totalCount
-                        : pageItemsCountEnd
-                }`}{" "}
-                of {totalCount} items
-            </div>
-            <div className="flex gap-4">
-                <button
-                    className="flex items-center disabled:cursor-not-allowed"
-                    disabled={(skip ?? 0) === 0}
-                    value={skip}
-                    onClick={() => setDebouncedPage(skip)}
-                >
-                    <FaCaretLeft /> <span>Prev</span>
-                </button>
-                <span>
-                    <input
-                        type="number"
-                        defaultValue={skip + 1}
-                        min={1}
-                        onChange={(e) =>
-                            setDebouncedPage(Number(e.target.value))
-                        }
-                        className="w-12 p-2 text-black"
-                    />
-                    <span> of {totalPages} pages</span>
-                </span>
-                <button
-                    className="flex items-center disabled:cursor-not-allowed"
-                    disabled={totalCount <= pageItemsCountEnd}
-                    onClick={() => setDebouncedPage(skip + 2)}
-                >
-                    <span>Next</span>
-                    <FaCaretRight />
-                </button>
-            </div>
-        </div>
-    );
-};
-
 function ExpensesList({
     expenses,
-    userId,
     budgets,
     totalPages,
     totalCount,
 }: {
     expenses: LeanExpenseWithId[];
     budgets: LeanBudgetWithId[];
-    userId: string;
     totalPages: number;
     totalCount: number;
 }) {
@@ -122,10 +27,10 @@ function ExpensesList({
         useState<LeanExpenseWithId | null>(null);
 
     return (
-        <div>
+        <div className="flex flex-col gap-2">
             <ExpensesListFilters />
             <div className="flex flex-col">
-                {expenses.map((expense, index) => {
+                {expenses.map((expense) => {
                     const {
                         name,
                         cost,
@@ -134,6 +39,7 @@ function ExpensesList({
                         tags,
                         notes,
                         _id,
+                        deleted,
                     } = expense;
                     // console.log("expense date");
                     // console.log(typeof dayjs(date));
@@ -141,8 +47,10 @@ function ExpensesList({
                     const datejsDate = dayjs(date)?.tz("America/Toronto");
                     return (
                         <div
-                            className="flex flex-col border-2"
-                            key={name + index}
+                            className={`flex flex-col border-2 ${
+                                deleted ? "bg-red-300" : ""
+                            }`}
+                            key={_id}
                         >
                             <div className="flex">
                                 <div
@@ -206,7 +114,6 @@ function ExpensesList({
                                         EDIT
                                     </button>
                                     <DeleteExpenses
-                                        userId={userId}
                                         expenseId={_id}
                                     />
                                 </div>
@@ -224,7 +131,11 @@ function ExpensesList({
                     );
                 })}
             </div>
-            <Pagination totalCount={totalCount} totalPages={totalPages} />
+            <Pagination
+                URL="/finance/expenses?"
+                totalCount={totalCount}
+                totalPages={totalPages}
+            />
         </div>
     );
 }

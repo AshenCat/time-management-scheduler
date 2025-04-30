@@ -28,13 +28,7 @@ const SubmitButton = () => {
     );
 };
 
-function AddExpensesForm({
-    userId,
-    budgets,
-}: {
-    userId: string;
-    budgets: LeanBudgetWithId[];
-}) {
+function AddExpensesForm({ budgets }: { budgets: LeanBudgetWithId[] }) {
     const [state, addExpenseAction] = useActionState(addExpense, initialState);
     const router = useRouter();
 
@@ -77,16 +71,6 @@ function AddExpensesForm({
                     placeholder="Enter expense name"
                     className=""
                     required
-                />
-            </div>
-            <div className="flex flex-col">
-                <input
-                    name="userId"
-                    id="userId"
-                    defaultValue={userId}
-                    className=""
-                    required
-                    hidden
                 />
             </div>
             <div className="flex flex-col">
