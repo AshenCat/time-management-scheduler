@@ -17,7 +17,7 @@ const SubmitButton = () => {
     const { pending } = useFormStatus();
     return (
         <button
-            className="p-2 bg-[color:--color-s-2] text-[color:--color-neutral]"
+            className="p-2 bg-(--color-s-2) text-(--color-neutral)"
             type="submit"
             aria-disabled={pending}
         >
@@ -60,7 +60,7 @@ function EditExpenses({
         <motion.form
             action={editExpenseAction}
             id="edit-expense-form"
-            className="p-2 max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2]"
+            className="p-2 max-w-100 [&_input]:text-(--color-p-2) [&_textarea]:text-(--color-p-2)"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

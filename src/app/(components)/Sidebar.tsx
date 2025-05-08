@@ -18,7 +18,7 @@ async function Sidebar() {
     })();
 
     return (
-        <header className="basis-48 shrink-0 h-full text-[color:--color-neutral] bg-[color:--color-s-2] relative flex flex-col">
+        <header className="basis-48 shrink-0 h-full text-(--color-neutral) bg-(--color-s-2) relative flex flex-col">
             <h2 className="underline underline-offset-8 p-4 text-xl content-baseline flex justify-between">
                 <Link href="/">
                     <span className="underline decoration-indigo-500">
@@ -26,7 +26,7 @@ async function Sidebar() {
                     </span>{" "}
                     Personal
                 </Link>
-                <button className="basis-3 bg-[color:--color-s-2]">
+                <button className="basis-3 bg-(--color-s-2)">
                     <FaArrowLeft />
                 </button>
             </h2>

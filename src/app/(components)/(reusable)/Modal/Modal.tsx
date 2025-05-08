@@ -46,7 +46,7 @@ function Modal({
                                 e.stopPropagation();
                                 setOpen(false);
                             }}
-                            className="hover:text-[color:--color-s-2]"
+                            className="hover:text-(--color-s-2)"
                         >
                             <FaSquareXmark />
                         </button>

@@ -138,13 +138,13 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
                             <div className="flex flex-col md:flex-row gap-2">
                                 <Link
                                     href="/finance/income"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     List Income
                                 </Link>
                                 <Link
                                     href="/finance/income/add"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     Add New Income
                                 </Link>
@@ -162,13 +162,13 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
                             <div className="flex flex-col md:flex-row gap-2">
                                 <Link
                                     href="/finance/expenses"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     List Expenses
                                 </Link>
                                 <Link
                                     href="/finance/expenses/add"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     Add New Expenses
                                 </Link>
@@ -186,13 +186,13 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
                             <div className="flex flex-col md:flex-row gap-2">
                                 <Link
                                     href="/finance/budgets"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     List Budget
                                 </Link>
                                 <Link
                                     href="/finance/budgets/add"
-                                    className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                                    className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                                 >
                                     Add New Budget
                                 </Link>
@@ -242,7 +242,10 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
                 <h1>Budgets</h1>
                 <div className="flex justify-center flex-wrap gap-2">
                     {Array.from(budgetDict.entries()).map(([id, budget]) => (
-                        <div key={id} className="flex flex-col basis-64 min-w-64 bg-white rounded-sm">
+                        <div
+                            key={id}
+                            className="flex flex-col basis-64 min-w-64 bg-white rounded-sm"
+                        >
                             <div className="text-center">{budget.name}</div>
                             <div className="h-64 w-full">
                                 <PieChart
@@ -294,7 +297,7 @@ function Graphs({ expenses, budgets, income }: IGraphs) {
 
             {/* <button
                 type="button"
-                className="bg-[color:--color-s-2] text-[color:--color-neutral] py-2 px-4"
+                className="bg-(--color-s-2) text-(--color-neutral) py-2 px-4"
                 // onClick={() => toggleStates("expense")}
                 // disabled={addExpenseState}
             >

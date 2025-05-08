@@ -46,7 +46,7 @@ function MediaCarousel({
                             e.stopPropagation();
                             setMediaIndex(i);
                         }}
-                        className="text-indigo-500 hover:text-[color:--color-s-2]"
+                        className="text-indigo-500 hover:text-(--color-s-2)"
                     >
                         <FaCircle />
                     </button>

@@ -5,15 +5,13 @@ My personal workout and finance tracker
 ## Developing
 
 -   when installing new packages, you need to rebuild the docker image again: `docker build -t IMAGE_NAME .`
+-   it is preferred to develop the app using `docker compose up --watch`
 
 ## Commands
 
 `docker compose up --watch` to run dev server and db. Make sure the 'watch' flag is enabled.
 
 ## TODO
--   `finance/expenses` filters - on-going
--   `finance/income` filters
--   `finance/budgets` filters
 -   `finance/expenses/{id}`
 -   `finance/income/{id}`
 -   `finance/budgets/{id}`

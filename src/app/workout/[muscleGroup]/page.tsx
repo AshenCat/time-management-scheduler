@@ -22,7 +22,7 @@ export default async function Page({
 
     return (
         <main className="flex flex-col p-4 md:p-8 flex-grow overflow-auto">
-            <h2 className="text-4xl text-[color:--color-s-1]">
+            <h2 className="text-4xl text-(--color-s-1)">
                 <span className="capitalize">{muscleGroup}</span> Workouts
             </h2>
             <section className="my-4 flex gap-4 flex-col md:flex-row">
@@ -74,7 +74,7 @@ interface IWorkoutCard {
 
 function WorkoutCard({ title, mediaURLs, description }: IWorkoutCard) {
     return (
-        <article className="flex flex-col border-2 border-[color:--color-s-2]">
+        <article className="flex flex-col border-2 border-(--color-s-2)">
             <Link href={`?modal-content=` + title.toLowerCase().replaceAll(' ', '-')}>
                 <h3 className="text-lg p-4">{title}</h3>
             </Link>

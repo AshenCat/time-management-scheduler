@@ -17,7 +17,7 @@ const SubmitButton = () => {
     const { pending } = useFormStatus();
     return (
         <button
-            className="p-2 bg-[color:--color-s-2] text-[color:--color-neutral] my-2"
+            className="p-2 bg-(--color-s-2) text-(--color-neutral) my-2"
             type="submit"
             aria-disabled={pending}
         >
@@ -44,7 +44,7 @@ function AddIncomeForm() {
         <form
             action={addIncomeAction}
             id="add-income-form"
-            className="max-w-100 [&_input]:text-[color:--color-p-2] [&_textarea]:text-[color:--color-p-2] my-4"
+            className="max-w-100 [&_input]:text-(--color-p-2) [&_textarea]:text-(--color-p-2) my-4"
         >
             <h2 className="mt-1">Add Income</h2>
             <div className="flex flex-col">

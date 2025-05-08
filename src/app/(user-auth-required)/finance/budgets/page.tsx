@@ -49,19 +49,19 @@ async function page({
                 <div className="flex flex-col md:flex-row gap-2 mb-2">
                     <Link
                         href="/finance"
-                        className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                        className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                     >
                         Back to Overview
                     </Link>
                     <Link
                         href="/finance/expenses"
-                        className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                        className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                     >
                         Expenses List
                     </Link>
                     <Link
                         href="/finance/budgets"
-                        className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                        className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                     >
                         Budget List
                     </Link>
@@ -69,7 +69,7 @@ async function page({
                 <div className="mb-2">
                     <Link
                         href="/finance/budgets/add-new"
-                        className="bg-[color:--color-s-2] text-[color:--color-neutral] py-1 px-2"
+                        className="bg-(--color-s-2) text-(--color-neutral) py-1 px-2"
                     >
                         Add New Budget
                     </Link>

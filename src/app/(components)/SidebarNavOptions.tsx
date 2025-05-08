@@ -18,13 +18,13 @@ function SidebarNavOptions() {
     const workoutAccordionState = workoutAccordionStateQuery === "true";
 
     const navItemSelectedClassName =
-        "bg-[color:--color-p-2] text-[color:--color-s-1] flex-col";
+        "bg-(--color-p-2) text-(--color-s-1) flex-col";
 
     console.log("pathname");
     console.log(pathname);
 
     return (
-        <nav className="flex flex-col hover:*:bg-[color:--color-p-2] hover:*:text-[color:--color-s-1] *:flex *:text-center *:[&>*]:w-full">
+        <nav className="flex flex-col hover:*:bg-(--color-p-2) hover:*:text-(--color-s-1) *:flex *:text-center *:[&>*]:w-full">
             <div
                 className={
                     pathname.toLowerCase().includes("workout") ||
